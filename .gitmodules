@@ -1,0 +1,6 @@
+[submodule "code\\Extern\\vcpkg"]
+	path = code\\Extern\\vcpkg
+	url = https://github.com/microsoft/vcpkg.git
+[submodule "code/Extern/vcpkg"]
+	path = code/Extern/vcpkg
+	url = https://github.com/microsoft/vcpkg.git

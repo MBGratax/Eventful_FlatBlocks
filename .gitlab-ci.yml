@@ -1,0 +1,26 @@
+stages:
+  - build
+  - test
+  - docs
+
+build:
+  stage: build
+  script:
+    - cmake -S code -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+    - cmake --build build
+
+test:
+  stage: test
+  script:
+    - cmake --build build --target test
+  # Only run if tests are defined.
+  when: on_success
+
+docs:
+  stage: docs
+  script:
+    - cmake -S code -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+    - cmake --build build --target doc_doxygen
+  artifacts:
+    paths:
+      - build/docs/html

@@ -1,0 +1,109 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 23,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "Default",
+      "displayName": "Default Config",
+      "hidden": true,
+      "description": "Default build using Ninja generator",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/FlatBlocks-${presetName}",
+      "installDir": "${sourceDir}/../../builds/FlatBlocks-${presetName}",
+      "toolchainFile": "${sourceDir}/Extern/vcpkg/scripts/buildsystems/vcpkg.cmake",
+      "cacheVariables": {
+        "CMAKE_CXX_STANDARD": "20"
+      },
+      "environment": {
+        "CMAKE_BUILD_PARALLEL_LEVEL": "8"
+      },
+      "vendor": {
+        "jetbrains.com/clion": {
+          "toolchain": "Visual Studio"
+        }
+      }
+    },
+    {
+      "name": "Debug",
+      "displayName": "Debug Config",
+      "description": "Debug build using Ninja generator",
+      "inherits": "Default",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      },
+      "environment": {
+        "PREPROCESSORS": "DEBUG_BUILD=1;LOGS_ENABLED=1"
+      }
+    },
+    {
+      "name": "Release",
+      "displayName": "Release Config",
+      "description": "Release build using Ninja generator",
+      "installDir": "${sourceDir}/../../builds/FlatBlocks",
+      "inherits": "Default",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "MinSizeRel"
+      },
+      "environment": {
+        "PREPROCESSORS": ""
+      }
+    },
+    {
+      "name": "ReleaseWithLogs",
+      "displayName": "RelWithDebugInfo Config",
+      "description": "Release build with logs using Ninja generator",
+      "inherits": "Default",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      },
+      "environment": {
+        "PREPROCESSORS": "LOGS_ENABLED=1;"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "Debug-Build",
+      "displayName": "Debug Build",
+      "description": "Debug build using Ninja generator",
+      "configurePreset": "Debug",
+      "vendor": {
+        "jetbrains.com/clion": {
+          "toolchain": "Visual Studio"
+        }
+      },
+      "jobs": 8,
+      "cleanFirst": true
+    },
+    {
+      "name": "Release-Build",
+      "displayName": "Release Build",
+      "description": "Release build using Ninja generator",
+      "configurePreset": "Release",
+      "vendor": {
+        "jetbrains.com/clion": {
+          "toolchain": "Visual Studio"
+        }
+      },
+      "jobs": 8,
+      "cleanFirst": true
+    },
+    {
+      "name": "ReleaseWithLogs-Build",
+      "displayName": "RelWithDebugInfo Build",
+      "description": "Release build with logs using Ninja generator",
+      "configurePreset": "ReleaseWithLogs",
+      "vendor": {
+        "jetbrains.com/clion": {
+          "toolchain": "Visual Studio"
+        }
+      },
+      "jobs": 8,
+      "cleanFirst": true
+    }
+  ]
+}
