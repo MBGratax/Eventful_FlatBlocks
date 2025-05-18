@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 3.30.5)
 set(TEST_FILES
         Test_Version.cpp)
 # Create the test executable.

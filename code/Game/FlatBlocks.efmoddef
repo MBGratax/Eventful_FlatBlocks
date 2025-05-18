@@ -1,0 +1,15 @@
+{
+  "Module Name": "FlatBlocks",
+  "Module Version": "0.1.0",
+  "Target Type": "EXECUTABLE",
+  "Include Platform": [],
+  "Exclude Platform": [],
+  "Defines": [],
+  "Dependencies": [
+    {
+      "Dependency Type": "PRIVATE",
+      "Library Name": "EFCore"
+    }
+  ]
+}
+

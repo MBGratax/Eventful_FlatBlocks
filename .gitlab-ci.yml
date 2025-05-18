@@ -1,26 +1,34 @@
 stages:
   - build
   - test
-  - docs
+  - package
 
 build:
   stage: build
   script:
     - cmake -S code -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
     - cmake --build build
+  artifacts:
+    paths:
+      - build
 
 test:
   stage: test
   script:
-    - cmake --build build --target test
-  # Only run if tests are defined.
-  when: on_success
+    - ctest --test-dir build --output-on-failure
+  dependencies:
+    - build
 
-docs:
-  stage: docs
+package:
+  stage: package
   script:
-    - cmake -S code -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
-    - cmake --build build --target doc_doxygen
+    - cmake --build build --target package
   artifacts:
+    # Adjust the pattern as needed (CPack will generate an installer/archive, e.g., .zip)
     paths:
-      - build/docs/html
+      - build/*.zip
+  dependencies:
+    - build
+    - test
+  only:
+    - main

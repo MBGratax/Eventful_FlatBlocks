@@ -8,6 +8,7 @@
     "spdlog",
     "entt",
     "glad",
-    "juce"
+    "imgui",
+    "bullet3"
   ]
 }

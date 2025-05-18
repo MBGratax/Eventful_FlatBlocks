@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "title": "Eventful Engine Module Definition",
+  "type": "object",
+  "properties": {
+    "Module Name": {
+      "type": "string",
+      "description": "Unique name of the module",
+      "pattern": "^\\S*$"
+    },
+    "Module Version": {
+      "type": "string",
+      "description": "The Semantic Version number of the module",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d+[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d+[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
+    },
+    "Target Type": {
+      "type": "string",
+      "enum": [
+        "STATIC_LIBRARY",
+        "SHARED_LIBRARY",
+        "EXECUTABLE"
+      ],
+      "description": "CMake target type to generate."
+    },
+    "Include Platform": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "Windows",
+          "Linux",
+          "Darwin"
+        ],
+        "type": "string"
+      },
+      "description": "List of platforms to include (e.g. Windows, Linux). Empty means all.",
+      "default": []
+    },
+    "Exclude Platform": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "Windows",
+          "Linux",
+          "Darwin"
+        ],
+        "type": "string"
+      },
+      "description": "List of platforms to exclude (e.g. Windows, Linux). Empty means none.",
+      "default": []
+    },
+    "Defines": {
+      "type": "array",
+      "description": "Defines for this target only",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z][A-Z0-9_]*$"
+      }
+    },
+    "Dependencies": {
+      "type": "array",
+      "description": "Libraries this module depends on",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Dependency Type": {
+            "type": "string",
+            "enum": [
+              "PRIVATE",
+              "PUBLIC"
+            ]
+          },
+          "Library Name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "Dependency Type",
+          "Library Name"
+        ]
+      },
+      "maxItems": 2,
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "Module Name",
+    "Module Version",
+    "Target Type"
+  ],
+  "additionalProperties": false
+}

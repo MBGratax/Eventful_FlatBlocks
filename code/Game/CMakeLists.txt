@@ -10,9 +10,6 @@ add_executable(${EXECUTABLE} ${SOURCE_FILES})
 
 target_compile_definitions(${EXECUTABLE} PRIVATE $ENV{PREPROCESSORS})
 
-# Link the game executable with the engine library.
-target_link_libraries(${EXECUTABLE} PUBLIC Eventful COMPILER_FLAGS)
-
 set(GAME_INCLUDE_DIRS
         PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Include>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
@@ -23,3 +20,11 @@ set(GAME_INCLUDE_DIRS
 target_include_directories(${EXECUTABLE} PUBLIC ${GAME_INCLUDE_DIRS})
 # Set up pch
 target_precompile_headers(${EXECUTABLE} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/pch.h)
+
+find_package(glfw3 CONFIG REQUIRED)
+
+# Link the game executable with the engine library.
+target_link_libraries(${EXECUTABLE} PRIVATE
+        Eventful
+        COMPILER_FLAGS
+        glfw)

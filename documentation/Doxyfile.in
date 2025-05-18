@@ -1,8 +1,10 @@
 # Doxyfile.in – template for Doxygen documentation
-PROJECT_NAME           = "FlatBlocks"
+PROJECT_NAME           = "Eventful"
 PROJECT_NUMBER         = "@PROJECT_VERSION@"
-OUTPUT_DIRECTORY       = "@CMAKE_CURRENT_BINARY_DIR@/docs"
-INPUT                  = "../code"
+OUTPUT_DIRECTORY       = "@CMAKE_CURRENT_SOURCE_DIR@/../documentation"
+INPUT                  = "@CMAKE_CURRENT_SOURCE_DIR@"
 RECURSIVE              = YES
 GENERATE_HTML          = YES
 GENERATE_LATEX         = YES
+EXCLUDE_PATTERNS       = */Extern/*
+EXCLUDE_PATTERNS       += */FlatBlocks*/*

@@ -1,4 +1,4 @@
-#include "Include/Core/Version.h"
+#include "Config/Version.h"
 #include "config.h"
 
 namespace EventfulEngine {
