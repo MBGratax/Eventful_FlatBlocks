@@ -9,68 +9,27 @@
     {
       "name": "Default",
       "displayName": "Default Config",
-      "hidden": true,
-      "description": "Default build using Ninja generator",
-      "generator": "Ninja Multi-Config",
-      "binaryDir": "${sourceDir}/FlatBlocks-${presetName}",
-      "installDir": "${sourceDir}/../../builds/FlatBlocks-${presetName}",
+      "description": "Default build using multiconfig VS generator",
+      "generator": "Visual Studio 17 2022",
+      "binaryDir": "${sourceDir}/../builds/FlatBlocksBin",
+      "installDir": "${sourceDir}/../builds/FlatBlocksBuild",
       "toolchainFile": "${sourceDir}/Extern/vcpkg/scripts/buildsystems/vcpkg.cmake",
       "cacheVariables": {
-        "CMAKE_CXX_STANDARD": "20"
-      },
-      "environment": {
-        "CMAKE_BUILD_PARALLEL_LEVEL": "8"
+        "CMAKE_CXX_STANDARD": "20",
+        "PREPROCESSORS": "$<$<CONFIG:Debug>:EF_RELEASE=0;EF_DEBUG_BUILD=1;EF_LOGS_ENABLED=1>;$<$<CONFIG:RelWithDebInfo>:EF_RELEASE=1;EF_DEBUG_BUILD=0;EF_LOGS_ENABLED=1>;$<$<CONFIG:Release>:EF_RELEASE=1;EF_DEBUG_BUILD=0;EF_LOGS_ENABLED=0>"
       },
       "vendor": {
         "jetbrains.com/clion": {
           "toolchain": "Visual Studio"
         }
       }
-    },
-    {
-      "name": "Debug",
-      "displayName": "Debug Config",
-      "description": "Debug build using Ninja generator",
-      "inherits": "Default",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
-      },
-      "environment": {
-        "PREPROCESSORS": "DEBUG_BUILD=1;LOGS_ENABLED=1"
-      }
-    },
-    {
-      "name": "Release",
-      "displayName": "Release Config",
-      "description": "Release build using Ninja generator",
-      "installDir": "${sourceDir}/../../builds/FlatBlocks",
-      "inherits": "Default",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "MinSizeRel"
-      },
-      "environment": {
-        "PREPROCESSORS": ""
-      }
-    },
-    {
-      "name": "ReleaseWithLogs",
-      "displayName": "RelWithDebugInfo Config",
-      "description": "Release build with logs using Ninja generator",
-      "inherits": "Default",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
-      },
-      "environment": {
-        "PREPROCESSORS": "LOGS_ENABLED=1;"
-      }
     }
   ],
   "buildPresets": [
     {
-      "name": "Debug-Build",
-      "displayName": "Debug Build",
-      "description": "Debug build using Ninja generator",
-      "configurePreset": "Debug",
+      "name": "Build",
+      "displayName": "Default Build",
+      "configurePreset": "Default",
       "vendor": {
         "jetbrains.com/clion": {
           "toolchain": "Visual Studio"
@@ -79,32 +38,6 @@
       "jobs": 8,
       "cleanFirst": true,
       "verbose": true
-    },
-    {
-      "name": "Release-Build",
-      "displayName": "Release Build",
-      "description": "Release build using Ninja generator",
-      "configurePreset": "Release",
-      "vendor": {
-        "jetbrains.com/clion": {
-          "toolchain": "Visual Studio"
-        }
-      },
-      "jobs": 8,
-      "cleanFirst": true
-    },
-    {
-      "name": "ReleaseWithLogs-Build",
-      "displayName": "RelWithDebugInfo Build",
-      "description": "Release build with logs using Ninja generator",
-      "configurePreset": "ReleaseWithLogs",
-      "vendor": {
-        "jetbrains.com/clion": {
-          "toolchain": "Visual Studio"
-        }
-      },
-      "jobs": 8,
-      "cleanFirst": true
     }
   ]
 }

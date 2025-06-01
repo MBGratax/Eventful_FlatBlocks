@@ -1,15 +1,12 @@
 {
-  "Module Name": "FlatBlocks",
+  "Module Name": "EFPlatform",
   "Module Version": "0.1.0",
-  "Target Type": "EXECUTABLE",
+  "Target Type": "SHARED_LIBRARY",
   "Include Platform": [],
   "Exclude Platform": [],
-  "Defines": [],
+  "Defines": [
+  ],
   "Dependencies": [
-    {
-      "Dependency Type": "PRIVATE",
-      "Library Name": "EventfulEngine"
-    },
     {
       "Dependency Type": "PRIVATE",
       "Library Name": "glfw"

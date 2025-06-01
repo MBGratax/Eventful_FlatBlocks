@@ -1,6 +1,6 @@
 #pragma once
 
-#include "EFObject.h"
+#include "../../Public/EventfulObject/EFObject.h"
 
 namespace EventfulEngine::Core {
 }

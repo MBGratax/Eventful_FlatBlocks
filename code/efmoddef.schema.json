@@ -78,7 +78,6 @@
           "Library Name"
         ]
       },
-      "maxItems": 2,
       "uniqueItems": true
     }
   },

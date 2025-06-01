@@ -22,7 +22,7 @@ set(CMAKE_DEBUG_POSTFIX d)
 
 set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
 
-set(DEBUG_CMAKELIST ON)
+option(DEBUG_CMAKELIST "Receive CMake Debug messages" ON)
 
 if (DEBUG_CMAKELIST)
     set(CMAKE_MESSAGE_LOG_LEVEL "DEBUG")
@@ -31,9 +31,6 @@ endif ()
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_VERBOSE_MAKEFILE ON)
-
-set(CMAKE_CXX_VISIBILITY_PRESET hidden)
-set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
 
 if (PROJECT_IS_TOP_LEVEL)
     option(EVENTFUL_BUILD_UNIT_TESTS "Build the Eventful_FlatBlocks unit tests" ON)
@@ -64,6 +61,12 @@ target_compile_options(COMPILER_FLAGS INTERFACE
         "$<${MSVC_CXX}:$<BUILD_INTERFACE:-W3;-utf-8>>"
 )
 
+# Enable Edit&Continue for MSVC projects
+if (MSVC)
+    target_compile_options(COMPILER_FLAGS INTERFACE "/ZI")
+    target_link_options(COMPILER_FLAGS INTERFACE "/INCREMENTAL")
+endif ()
+
 if (APPLE)
     set(CMAKE_INSTALL_RPATH "@executable_path/../lib")
 elseif (UNIX)
@@ -75,7 +78,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 
 # -------------------------------------------------------------------------
-# vcpkg integration: if no toolchain is already specified, use our submodule.
+# Fallback for vcpkg in case user forgot to use presets.
 if (NOT DEFINED CMAKE_TOOLCHAIN_FILE)
     set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/Extern/vcpkg/scripts/buildsystems/vcpkg.cmake"
             CACHE STRING "Vcpkg toolchain file")
@@ -88,7 +91,7 @@ if (Git_FOUND)
             COMMAND "${GIT_EXECUTABLE}" describe --tags --always --dirty
             WORKING_DIRECTORY "${CMAKE_BIN_DIR}"
             OUTPUT_VARIABLE GIT_DESCRIBE OUTPUT_STRIP_TRAILING_WHITESPACE)
-    string(APPEND PROJECT_VERSION "_" "${GIT_DESCRIBE}")
+    set(PROJECT_VERSION "${PROJECT_VERSION}_${GIT_DESCRIBE}")
 endif ()
 message(STATUS "Project version: ${PROJECT_VERSION}")
 
@@ -112,6 +115,7 @@ endforeach ()
 message(DEBUG "ModDefs: ${EFMODDEF_DIRS}")
 
 set(ALL_MODULE_TARGETS "")
+
 # 2) First Pass:
 foreach (MODULE_DEFINITION IN LISTS EFMODDEF_PATHS)
     # Module directory
@@ -129,7 +133,8 @@ foreach (MODULE_DEFINITION IN LISTS EFMODDEF_PATHS)
     string(JSON MODULE_DEFINES GET "${MOD_JSON}" Defines)
     string(JSON MODULE_DEPS GET "${MOD_JSON}" Dependencies)
 
-    message(STATUS "${MODULE_NAME}: Pass 1 Start")
+    message(CHECK_START "${MODULE_NAME}: Pass 1 Start")
+    list(APPEND CMAKE_MESSAGE_INDENT "  ")
 
     # 2.2) Platform filter; TODO: Define own platform Targets to check against
     message(CHECK_START "Checking if: ${MODULE_NAME} should compile...")
@@ -150,7 +155,7 @@ foreach (MODULE_DEFINITION IN LISTS EFMODDEF_PATHS)
 
     message(CHECK_PASS "Pass!")
 
-    message(STATUS "${MODULE_NAME}: Finding Sources...")
+    message(CHECK_START "${MODULE_NAME}: Finding Sources...")
 
     # 2.3) Gather source and header files
     file(GLOB_RECURSE ${MODULE_NAME}_SOURCE CONFIGURE_DEPENDS
@@ -162,26 +167,51 @@ foreach (MODULE_DEFINITION IN LISTS EFMODDEF_PATHS)
 
     list(LENGTH ${MODULE_NAME}_SOURCE SOURCE_NUMBER)
     list(LENGTH ${MODULE_NAME}_HEADER HEADER_NUMBER)
-    message(STATUS "${MODULE_NAME}: Found ${SOURCE_NUMBER} source- and ${HEADER_NUMBER} header files")
+    message(CHECK_PASS "${MODULE_NAME}: Found ${SOURCE_NUMBER} source- and ${HEADER_NUMBER} header files")
 
-    message(DEBUG "${MODULE_NAME} Sources: ${${MODULE_NAME}_SOURCE}")
-    message(DEBUG "${MODULE_NAME} Headers: ${${MODULE_NAME}_HEADER}")
-    # 2.4) Gather Public include folders: any “*/Public” in this tree
+    message(DEBUG "${MODULE_NAME} Sources:")
+    if (DEBUG_CMAKELIST)
+        list(APPEND CMAKE_MESSAGE_INDENT "  ")
+        foreach (ITEM IN LISTS ${MODULE_NAME}_SOURCE)
+            message(DEBUG "${ITEM}")
+        endforeach ()
+        list(POP_BACK CMAKE_MESSAGE_INDENT)
+    endif ()
 
-    message(STATUS "${MODULE_NAME}: Finding include directories...")
-    file(GLOB_RECURSE ${MODULE_NAME}_SUBDIRS LIST_DIRECTORIES TRUE CONFIGURE_DEPENDS
-            ${MOD_DIR}/*/Public/
-            ${MOD_DIR}/Public
-    )
+    message(DEBUG "${MODULE_NAME} Headers: ")
+    if (DEBUG_CMAKELIST)
+        list(APPEND CMAKE_MESSAGE_INDENT "  ")
+        foreach (ITEM IN LISTS ${MODULE_NAME}_HEADER)
+            message(DEBUG "${ITEM}")
+        endforeach ()
+        list(POP_BACK CMAKE_MESSAGE_INDENT)
+    endif ()
+
+    # 2.4) Grab all includes we gathered and filter out any that are specifically in a /Private* folder
+    message(CHECK_START "${MODULE_NAME}: Finding include directories...")
+    set(${MODULE_NAME}_SUBDIRS ${${MODULE_NAME}_HEADER})
+    list(REMOVE_DUPLICATES ${MODULE_NAME}_SUBDIRS)
     set(${MODULE_NAME}_PUBLIC_DIRS "")
     foreach (DIR IN LISTS ${MODULE_NAME}_SUBDIRS)
-        if (DIR MATCHES "/Public$")
-            list(APPEND ${MODULE_NAME}_PUBLIC_DIRS "${DIR}")
+        get_filename_component(CURRENT_DIR ${DIR} DIRECTORY)
+        if (NOT CURRENT_DIR MATCHES "/(^|[\\\/])Private([\\\/]|$)/i")
+            list(APPEND ${MODULE_NAME}_PUBLIC_DIRS "${CURRENT_DIR}")
         endif ()
     endforeach ()
 
+    message(DEBUG "${MODULE_NAME} Include Directories: ")
+    if (DEBUG_CMAKELIST)
+        list(APPEND CMAKE_MESSAGE_INDENT "  ")
+        foreach (ITEM IN LISTS ${MODULE_NAME}_PUBLIC_DIRS)
+            message(DEBUG "${ITEM}")
+        endforeach ()
+        list(POP_BACK CMAKE_MESSAGE_INDENT)
+    endif ()
+
+    list(LENGTH ${MODULE_NAME}_PUBLIC_DIRS INCLUDEDIR_NUMBER)
+    message(CHECK_PASS "${MODULE_NAME}: Found ${INCLUDEDIR_NUMBER} include directories")
     # 2.5) Filter out source files that belong to submodules
-    message(STATUS "${MODULE_NAME}: Filtering Source files and include directories...")
+    message(CHECK_START "${MODULE_NAME}: Filtering Source files and include directories...")
 
     set(REMOVE_SRC "")
     set(REMOVE_INC "")
@@ -192,50 +222,100 @@ foreach (MODULE_DEFINITION IN LISTS EFMODDEF_PATHS)
         set(SKIP_PUB FALSE)
         foreach (OTHER_DIR IN LISTS EFMODDEF_DIRS)
             if (NOT OTHER_DIR STREQUAL MOD_DIR)
-                string(FIND "${SRC}" "${OTHER_DIR}/" IS_SUBSOURCE)
-                string(FIND "${INC}" "${OTHER_DIR}/" IS_SUBINCLUDE)
-                string(FIND "${PUB}" "${OTHER_DIR}/Public" IS_SUBPUBDIR)
-                string(FIND "${PUB}" "${OTHER_DIR}/*/Public" IS_SUBPUBDIR)
-                if (NOT IS_SUBSOURCE EQUAL -1)
-                    message(DEBUG "Skipping ${SRC} because it contains ${OTHER_DIR}/")
+
+                cmake_path(IS_PREFIX OTHER_DIR "${MOD_DIR}" SKIP)
+                if (SKIP)
+                    message(DEBUG "Skipping filter step on ${OTHER_DIR} because it is a parent to ${MOD_DIR}")
+                    break()
+                endif ()
+
+                if (NOT "${SRC}" STREQUAL "")
+                    cmake_path(IS_PREFIX OTHER_DIR "${SRC}" IS_SUBSOURCE)
+                endif ()
+
+                if (NOT "${INC}" STREQUAL "")
+                    cmake_path(IS_PREFIX OTHER_DIR "${INC}" IS_SUBINCLUDE)
+                endif ()
+
+                if (NOT "${PUB}" STREQUAL "")
+                    cmake_path(IS_PREFIX OTHER_DIR "${PUB}" IS_SUBPUBDIR)
+                endif ()
+
+                if (IS_SUBSOURCE)
+                    message(DEBUG "Filtering source ${SRC} because it contains ${OTHER_DIR}/")
                     set(SKIP_SRC TRUE)
                 endif ()
-                if (NOT IS_SUBINCLUDE EQUAL -1)
-                    message(DEBUG "Skipping ${INC} because it contains ${OTHER_DIR}/")
+                if (IS_SUBINCLUDE)
+                    message(DEBUG "Filtering header ${INC} because it contains ${OTHER_DIR}/")
                     set(SKIP_INC TRUE)
                 endif ()
-                if (NOT IS_SUBPUBDIR EQUAL -1)
-                    message(DEBUG "Skipping ${PUB} because it contains ${OTHER_DIR}/")
+                if (IS_SUBPUBDIR)
+                    message(DEBUG "Filtering include dir ${PUB} because it contains ${OTHER_DIR}/")
                     set(SKIP_PUB TRUE)
                 endif ()
             endif ()
             if (SKIP_SRC OR SKIP_INC OR SKIP_PUB)
-                cmake_path(RELATIVE_PART OTHER_DIR MOD_DIR SKIPPED_SUBPATH)
-                list(APPEND SUBMODULES ${SKIPPED_SUBPATH})
-                break()
+                cmake_path(GET OTHER_DIR RELATIVE_PART SKIPPED_SUBPATH)
+                list(APPEND ${MODULE_NAME}_SUBMODULES ${SKIPPED_SUBPATH})
+            endif ()
+            if (SKIP_SRC)
+                list(APPEND REMOVE_SRC "${SRC}")
+                set(SKIP_SRC FALSE)
+            endif ()
+            if (SKIP_INC)
+                list(APPEND REMOVE_INC "${INC}")
+                set(SKIP_INC FALSE)
+            endif ()
+            if (SKIP_PUB)
+                list(APPEND REMOVE_PUB "${PUB}")
+                set(SKIP_PUB FALSE)
             endif ()
         endforeach ()
-        if (SKIP_SRC)
-            list(APPEND REMOVE_SRC "${SRC}")
-        endif ()
-        if (SKIP_INC)
-            list(APPEND REMOVE_INC "${INC}")
-        endif ()
-        if (SKIP_PUB)
-            list(APPEND REMOVE_PUB "${PUB}")
-        endif ()
     endforeach ()
 
-    list(LENGTH SUBMODULES NUM_SUBMODULES)
-    message(STATUS "${MODULE_NAME}: Filtered ${NUM_SUBMODULES} Subdirectories")
+    list(LENGTH ${MODULE_NAME}_SUBMODULES NUM_SUBMODULES)
+    message(VERBOSE "${MODULE_NAME}: Filtered ${NUM_SUBMODULES} Subdirectories")
 
     foreach (SRC INC PUB IN ZIP_LISTS REMOVE_SRC REMOVE_INC REMOVE_PUB)
-        list(REMOVE_ITEM ${MODULE_NAME}_SOURCE "${SRC}")
-        list(REMOVE_ITEM ${MODULE_NAME}_HEADER "${INC}")
-        list(REMOVE_ITEM ${MODULE_NAME}_PUBLIC_DIRS "${PUB}")
+        if (NOT SRC STREQUAL "")
+            list(REMOVE_ITEM ${MODULE_NAME}_SOURCE "${SRC}")
+        endif ()
+        if (NOT INC STREQUAL "")
+            list(REMOVE_ITEM ${MODULE_NAME}_HEADER "${INC}")
+        endif ()
+        if (NOT PUB STREQUAL "")
+            list(REMOVE_ITEM ${MODULE_NAME}_PUBLIC_DIRS "${PUB}")
+        endif ()
     endforeach ()
 
-    message(STATUS "${MODULE_NAME}: Filtering Successful")
+    message(CHECK_PASS "${MODULE_NAME}: Filtering Successful")
+
+    message(DEBUG "${MODULE_NAME}: Filtered Sources: ")
+    if (DEBUG_CMAKELIST)
+        list(APPEND CMAKE_MESSAGE_INDENT "  ")
+        foreach (ITEM IN LISTS ${MODULE_NAME}_SOURCE)
+            message(DEBUG "${ITEM}")
+        endforeach ()
+        list(POP_BACK CMAKE_MESSAGE_INDENT)
+    endif ()
+    message(DEBUG "${MODULE_NAME}: Filtered Headers: ")
+    if (DEBUG_CMAKELIST)
+        list(APPEND CMAKE_MESSAGE_INDENT "  ")
+        foreach (ITEM IN LISTS ${MODULE_NAME}_HEADER)
+            message(DEBUG "${ITEM}")
+        endforeach ()
+        list(POP_BACK CMAKE_MESSAGE_INDENT)
+    endif ()
+    message(DEBUG "${MODULE_NAME}: Filtered Include Directories: ")
+    if (DEBUG_CMAKELIST)
+        list(APPEND CMAKE_MESSAGE_INDENT "  ")
+        foreach (ITEM IN LISTS ${MODULE_NAME}_PUBLIC_DIRS)
+            message(DEBUG "${ITEM}")
+        endforeach ()
+        list(POP_BACK CMAKE_MESSAGE_INDENT)
+    endif ()
+
+    message(CHECK_START "${MODULE_NAME}: Configuring public includes...")
 
     set(${MODULE_NAME}_PUBLIC_INCLUDES "")
     foreach (PUB IN LISTS ${MODULE_NAME}_PUBLIC_DIRS)
@@ -243,38 +323,68 @@ foreach (MODULE_DEFINITION IN LISTS EFMODDEF_PATHS)
                 $<BUILD_INTERFACE:${PUB}>)
     endforeach ()
 
-    # 2.6) Create CMake target
-    set(CURRENT_TARGET ${MODULE_NAME})
-    message(STATUS "${MODULE_NAME}: Creating Target \"${CURRENT_TARGET}\" of type ${TARGET_TYPE}")
-    if (TARGET_TYPE STREQUAL "STATIC_LIBRARY")
-        add_library(${CURRENT_TARGET} STATIC ${${MODULE_NAME}_HEADER} ${${MODULE_NAME}_SOURCE})
-    elseif (TARGET_TYPE STREQUAL "SHARED_LIBRARY")
-        add_library(${CURRENT_TARGET} SHARED ${${MODULE_NAME}_HEADER} ${${MODULE_NAME}_SOURCE})
-        generate_export_header(${CURRENT_TARGET})
-    elseif (TARGET_TYPE STREQUAL "EXECUTABLE")
-        add_executable(${CURRENT_TARGET} ${${MODULE_NAME}_HEADER} ${${MODULE_NAME}_SOURCE})
-    else ()
-        message(FATAL_ERROR "Unknown TargetType '${TARGET_TYPE}' in ${MOD_DEF}")
+    message(DEBUG "${MODULE_NAME}: Public Includes: ")
+    if (DEBUG_CMAKELIST)
+        list(APPEND CMAKE_MESSAGE_INDENT "  ")
+        foreach (ITEM IN LISTS ${MODULE_NAME}_PUBLIC_INCLUDES)
+            message(DEBUG "${ITEM}")
+        endforeach ()
+        list(POP_BACK CMAKE_MESSAGE_INDENT)
     endif ()
 
-    set_target_properties(${CURRENT_TARGET} PROPERTIES
+    message(CHECK_PASS "${MODULE_NAME}: Public Includes configured")
+
+    # 2.6) Create CMake target
+    set(${MODULE_NAME}_TARGET ${MODULE_NAME})
+    message(CHECK_START "${MODULE_NAME}: Creating Target \"${${MODULE_NAME}_TARGET}\" of type ${TARGET_TYPE}")
+    if (TARGET_TYPE STREQUAL "STATIC_LIBRARY")
+        add_library(${${MODULE_NAME}_TARGET} STATIC ${${MODULE_NAME}_HEADER} ${${MODULE_NAME}_SOURCE})
+    elseif (TARGET_TYPE STREQUAL "SHARED_LIBRARY")
+        add_library(${${MODULE_NAME}_TARGET} SHARED ${${MODULE_NAME}_HEADER} ${${MODULE_NAME}_SOURCE})
+        generate_export_header(${${MODULE_NAME}_TARGET})
+    elseif (TARGET_TYPE STREQUAL "EXECUTABLE")
+        add_executable(${${MODULE_NAME}_TARGET} ${${MODULE_NAME}_HEADER} ${${MODULE_NAME}_SOURCE})
+    else ()
+        message(CHECK_FAIL "Unknown TargetType '${TARGET_TYPE}' in ${MOD_DEF}")
+    endif ()
+
+    set_target_properties(${${MODULE_NAME}_TARGET} PROPERTIES
             POSITION_INDEPENDENT_CODE ${BUILD_SHARED_LIBS}
     )
+    message(CHECK_PASS "${MODULE_NAME}: Target successfully created!")
 
     # 2.7) Add compile definitions - project wide and from module definition
-    target_compile_definitions(${CURRENT_TARGET}
+    message(CHECK_START "${MODULE_NAME}: Parsing Defines...")
+    set(${${MODULE_NAME}_TARGET}_MODULE_DEFINES "")
+    string(JSON DEF_COUNT LENGTH "${MODULE_DEFINES}")
+    if (DEF_COUNT)
+        math(EXPR last "${DEF_COUNT}-1")
+        foreach (i RANGE 0 ${last})
+            # retrieve each object’s fields
+            string(JSON DEFINE GET "${MODULE_DEFINES}" ${i})
+
+            list(APPEND ${${MODULE_NAME}_TARGET}_MODULE_DEFINES "${LIB_NAME}")
+        endforeach ()
+        message(CHECK_PASS "Success")
+    else ()
+        message(CHECK_PASS "Success - No Additional Defines")
+    endif ()
+
+    target_compile_definitions(${${MODULE_NAME}_TARGET}
             PRIVATE
-            ${MODULE_DEFINES}
-            $ENV{PREPROCESSORS})
+            ${${${MODULE_NAME}_TARGET}_MODULE_DEFINES}
+            ${PREPROCESSORS})
+
+    get_target_property(DEFINES ${${MODULE_NAME}_TARGET} COMPILE_DEFINITIONS)
+    message(DEBUG "${${MODULE_NAME}_TARGET}: Defines: ${DEFINES}")
 
     # 2.8) Cache current target into list
-    list(APPEND ALL_MODULE_TARGETS ${CURRENT_TARGET})
+    list(APPEND ALL_MODULE_TARGETS ${${MODULE_NAME}_TARGET})
 
     # 2.9) Parse Dependencies
-    message(STATUS "${MODULE_NAME}: Parsing Dependencies...")
-    set(DEPENDENCIES "")
-    set(${CURRENT_TARGET}_PUBLIC_DEPENDENCIES "")
-    set(${CURRENT_TARGET}_PRIVATE_DEPENDENCIES "")
+    message(CHECK_START "${MODULE_NAME}: Parsing Dependencies...")
+    set(${${MODULE_NAME}_TARGET}_PUBLIC_DEPENDENCIES "")
+    set(${${MODULE_NAME}_TARGET}_PRIVATE_DEPENDENCIES "")
 
     string(JSON DEP_COUNT LENGTH "${MODULE_DEPS}")
     if (DEP_COUNT)
@@ -284,20 +394,30 @@ foreach (MODULE_DEFINITION IN LISTS EFMODDEF_PATHS)
             string(JSON DEP_TYPE GET "${MODULE_DEPS}" ${i} "Dependency Type")
             string(JSON LIB_NAME GET "${MODULE_DEPS}" ${i} "Library Name")
 
+            string(FIND ${LIB_NAME} "INCLUDE" IS_INCLUDE_DEPENDENCY)
+
             if ("${DEP_TYPE}" STREQUAL "PUBLIC")
-                if (${CURRENT_TARGET}_PUBLIC_DEPENDENCIES STREQUAL "")
-                    string(PREPEND ${CURRENT_TARGET}_PUBLIC_DEPENDENCIES "${LIB_NAME}")
+                if (NOT IS_INCLUDE_DEPENDENCY EQUAL -1)
+                    target_include_directories(${${MODULE_NAME}_TARGET} PUBLIC ${${LIB_NAME}})
                     continue()
                 endif ()
-                string(JOIN "\n" ${CURRENT_TARGET}_PUBLIC_DEPENDENCIES "${${CURRENT_TARGET}_PUBLIC_DEPENDENCIES}" "${LIB_NAME}")
+                if (${${MODULE_NAME}_TARGET}_PUBLIC_DEPENDENCIES STREQUAL "")
+                    list(PREPEND ${${MODULE_NAME}_TARGET}_PUBLIC_DEPENDENCIES "${LIB_NAME}")
+                    continue()
+                endif ()
+                list(APPEND ${${MODULE_NAME}_TARGET}_PUBLIC_DEPENDENCIES "${LIB_NAME}")
             elseif ("${DEP_TYPE}" STREQUAL "PRIVATE")
-                if (${CURRENT_TARGET}_PRIVATE_DEPENDENCIES STREQUAL "")
-                    string(PREPEND ${CURRENT_TARGET}_PRIVATE_DEPENDENCIES "${LIB_NAME}")
+                if (NOT IS_INCLUDE_DEPENDENCY EQUAL -1)
+                    target_include_directories(${${MODULE_NAME}_TARGET} PRIVATE ${${LIB_NAME}})
                     continue()
                 endif ()
-                string(JOIN "\n" ${CURRENT_TARGET}_PRIVATE_DEPENDENCIES "${${CURRENT_TARGET}_PRIVATE_DEPENDENCIES}" "${LIB_NAME}")
+                if (${${MODULE_NAME}_TARGET}_PRIVATE_DEPENDENCIES STREQUAL "")
+                    list(PREPEND ${${MODULE_NAME}_TARGET}_PRIVATE_DEPENDENCIES "${LIB_NAME}")
+                    continue()
+                endif ()
+                list(APPEND ${${MODULE_NAME}_TARGET}_PRIVATE_DEPENDENCIES "${LIB_NAME}")
             else ()
-                message(FATAL_ERROR "${MODULE_NAME}: Invalid dependency type ${DEP_TYPE}!")
+                message(CHECK_FAIL "${MODULE_NAME}: Invalid dependency type ${DEP_TYPE}!")
             endif ()
         endforeach ()
 
@@ -305,11 +425,15 @@ foreach (MODULE_DEFINITION IN LISTS EFMODDEF_PATHS)
         message(STATUS "${MODULE_NAME}: No Dependencies")
     endif ()
 
-    message(STATUS "${MODULE_NAME}: Dependencies gathered!")
-    message(STATUS "${MODULE_NAME}: Pass 1 End, waiting for other targets")
+    message(CHECK_PASS "${MODULE_NAME}: Dependencies gathered!")
+    if (NOT TARGET ${MODULE_NAME})
+        message(CHECK_FAIL "🔥 ${MODULE_NAME} target not found! Something went wrong!")
+    endif ()
+    list(POP_BACK CMAKE_MESSAGE_INDENT)
+    message(CHECK_PASS "${MODULE_NAME}: Pass 1 End, waiting for other targets")
     # 2.10) Store dependencies and include directories for linking step
-    set(${CURRENT_TARGET}_INCLUDE_DIRS "${${MODULE_NAME}_PUBLIC_INCLUDES}")
-    set(${CURRENT_TARGET}_INSTALL_DIR "${MOD_DIR}")
+    set(${${MODULE_NAME}_TARGET}_INCLUDE_DIRS "${${MODULE_NAME}_PUBLIC_INCLUDES}")
+    set(${${MODULE_NAME}_TARGET}_INSTALL_DIR "${MOD_DIR}")
 endforeach ()
 
 # Find packages; TODO: Find a way to automate this and make it less error prone
@@ -319,32 +443,43 @@ find_package(EnTT CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 find_package(Bullet CONFIG REQUIRED)
-
-set(BULLET_TARGETS
-        BulletDynamics
-        BulletCollision
-        Bullet3Common
-)
+find_package(glm CONFIG REQUIRED)
+find_package(Stb REQUIRED)
 
 # 3) Second Pass:
 foreach (TARGET IN LISTS ALL_MODULE_TARGETS)
-    message(STATUS "${TARGET}: Pass 2 start")
+    message(CHECK_START "${TARGET}: Pass 2 start")
 
-    message(STATUS "${TARGET}: Linking libraries")
+    message(CHECK_START "${TARGET}: Linking libraries")
     # 3.1) Link compiler definitions and dependencies
 
-    message(STATUS "${TARGET}: target_link_libraries(${TARGET}\nPUBLIC\nCOMPILER_FLAGS\n${${TARGET}_PUBLIC_DEPENDENCIES}\nPRIVATE\n${${TARGET}_PRIVATE_DEPENDENCIES})")
+    if (NOT TARGET ${MODULE_NAME})
+        message(CHECK_FAIL "🔥 ${MODULE_NAME} target not found!")
+    endif ()
+
+    foreach (PUB_DEP PRIV_DEP IN ZIP_LISTS ${TARGET}_PUBLIC_DEPENDENCIES ${TARGET}_PRIVATE_DEPENDENCIES)
+        if (NOT TARGET ${PUB_DEP})
+            message(WARNING "🔥 ${PUB_DEP} target not found!")
+        endif ()
+        if (NOT TARGET ${PRIV_DEP})
+            message(WARNING "🔥 ${PRIV_DEP} target not found!")
+        endif ()
+    endforeach ()
+    message(VERBOSE "${TARGET}: target_link_libraries(${TARGET}\nPUBLIC\nCOMPILER_FLAGS\n${${TARGET}_PUBLIC_DEPENDENCIES}\nPRIVATE\n${${TARGET}_PRIVATE_DEPENDENCIES})")
     target_link_libraries(${TARGET}
             PUBLIC
             COMPILER_FLAGS
-            ${TARGET}_PUBLIC_DEPENDENCIES
+            ${${TARGET}_PUBLIC_DEPENDENCIES}
             PRIVATE
-            ${TARGET}_PRIVATE_DEPENDENCIES
+            ${${TARGET}_PRIVATE_DEPENDENCIES}
     )
 
+    get_target_property(LINK_LIBS ${TARGET} LINK_LIBRARIES)
+    message(DEBUG "${TARGET}: LINK_LIBRARIES: ${LINK_LIBS}")
+    message(CHECK_PASS "${TARGET}: Success")
     # 3.2) Set Include directories
-    message(STATUS "${TARGET}: Set Include and install Directories")
-    message(STATUS "${TARGET}: target_include_directories(${TARGET}\nPUBLIC\n${${TARGET}_INCLUDE_DIRS}\n$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>\nPRIVATE\n$<BUILD_INTERFACE:${${TARGET}_INSTALL_DIR}>\n)")
+    message(CHECK_START "${TARGET}: Set Include and install Directories")
+    message(VERBOSE "${TARGET}: target_include_directories(${TARGET}\nPUBLIC\n${${TARGET}_INCLUDE_DIRS}\n$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>\nPRIVATE\n$<BUILD_INTERFACE:${${TARGET}_INSTALL_DIR}>\n)")
     target_include_directories(${TARGET}
             PUBLIC
             ${${TARGET}_INCLUDE_DIRS}
@@ -352,7 +487,10 @@ foreach (TARGET IN LISTS ALL_MODULE_TARGETS)
             PRIVATE
             $<BUILD_INTERFACE:${${TARGET}_INSTALL_DIR}>
     )
-    message(STATUS "${TARGET}: Pass 2 end")
+    get_target_property(INCLUDES ${TARGET} INCLUDE_DIRECTORIES)
+    message(DEBUG "${TARGET}: INCLUDE_DIRS: ${INCLUDES}")
+    message(CHECK_PASS "${TARGET}: Success")
+    message(CHECK_PASS "${TARGET}: Pass 2 end")
 endforeach ()
 
 #add_subdirectory(EventfulEngine)

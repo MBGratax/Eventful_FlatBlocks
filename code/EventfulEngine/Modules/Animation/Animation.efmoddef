@@ -1,0 +1,10 @@
+{
+  "Module Name": "EFAnimation",
+  "Module Version": "0.1.0",
+  "Target Type": "SHARED_LIBRARY",
+  "Include Platform": [],
+  "Exclude Platform": [],
+  "Defines": [],
+  "Dependencies": []
+}
+

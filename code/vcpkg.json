@@ -9,6 +9,8 @@
     "entt",
     "glad",
     "imgui",
-    "bullet3"
+    "bullet3",
+    "glm",
+    "stb"
   ]
 }

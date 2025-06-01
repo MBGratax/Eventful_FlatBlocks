@@ -1,6 +1,6 @@
 # Doxyfile.in – template for Doxygen documentation
 PROJECT_NAME           = "Eventful"
-PROJECT_NUMBER         = "0.1.0_7e76e70-dirty"
+PROJECT_NUMBER         = "0.1.0_fbcb072-dirty"
 OUTPUT_DIRECTORY       = "D:/GameLabs/GLIII_Eventful_FlatBlocks/code/../documentation"
 INPUT                  = "D:/GameLabs/GLIII_Eventful_FlatBlocks/code"
 RECURSIVE              = YES

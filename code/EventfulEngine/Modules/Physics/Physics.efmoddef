@@ -8,7 +8,15 @@
   "Dependencies": [
     {
       "Dependency Type": "PRIVATE",
-      "Library Name": "${BULLET_TARGETS}"
+      "Library Name": "BulletDynamics"
+    },
+    {
+      "Dependency Type": "PRIVATE",
+      "Library Name": "BulletCollision"
+    },
+    {
+      "Dependency Type": "PRIVATE",
+      "Library Name": "Bullet3Common"
     },
     {
       "Dependency Type": "PRIVATE",
