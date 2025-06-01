@@ -3,8 +3,8 @@
 
 <!-- PROJECT SHIELDS -->
 
-<!-- Hacky attempt to make conditional image replacements, the link should already be kind of correct? -->
-<style type="text/css">
+<!-- Hacky attempt to make conditional image replacements
+<style>
     .image-replacement-stars[data-value="https://gitlab2.informatik.uni-wuerzburg.de/GE/Teaching/gl3/projects/2024/28-gl3-haefner/-/"]{
         display: block;
         -moz-box-sizing: border-box;
@@ -27,6 +27,9 @@
         no-repeat;
     }
 </style>
+Gitlab and github do not in fact render CSS styles, so while this does what it is supposed to do locally, it does not on repo -->
+
+<!-- For now I guess we'll live with the link being correct, but the image being incorrect -->
 
 <div align="center"> 
     <a href="/../../stargazers"> 
@@ -44,14 +47,14 @@
 
 <!-- PROJECT LOGO -->
 <br />
-<div style="align-content: center; text-align: center">
+<div align="center">
   <a href="/../../">
     <img src="Resources/placeholderIcon.png" alt="Logo" width="96" height="96">
   </a>
 
-<h1 style="align-content: center; text-align: center">Eventful Engine & FlatBlocks</h1>
+<h1 align="center">Eventful Engine & FlatBlocks</h1>
 
-  <p style="align-content: center; text-align: center">
+  <p align="center">
     A general purpose game engine!
     <br />
     <a href="/../../wiki"><strong>Explore the docs »</strong></a>
@@ -80,13 +83,20 @@ Commented out for now, add link to trailer, bug report and feature request later
 | Study Program      | Games Engineering B.Sc.                                         |
 
 ### Abstract
+Stub
 
+<!-- GitLab could use [[_TOC_]] to autogen this, but github can't. Github autogens one though.
+In the end it makes sense to just build it ourselves-->
+### Table of Content
+1. [About](#about-eventful-engine)
+2. [Built With](#built-with)
+3. [Getting Started](#getting-started)
 
-[[_TOC_]]
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### About Eventful Engine
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+[![Placeholder Screenshot][product-screenshot]](https://example.com)
 
 The Eventful Engine is a small but powerful general-purpose multi-platform game engine. 
 Currently, there is only direct support for windows, but the engine architecture is based on modules and adapters,
@@ -107,6 +117,7 @@ simplify the definition of targets and dependencies.
 ## Getting Started
 
 Stub
+
 <!-- 
 Fill this out once we actually have a set in stone set up.
 ### Prerequisites
