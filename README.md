@@ -35,11 +35,11 @@ Gitlab and github do not in fact render CSS styles, so while this does what it i
     <a href="/../../stargazers"> 
         <img class="image-replacement-stars" src="https://img.shields.io/github/stars/MBGratax/Eventful_FlatBlocks.svg?style=plastic" alt="stars"  data-value="/../../"> 
     </a> 
-    &#9;
+    &nbsp;&nbsp;
     <a href="/../../issues"> 
         <img class="image-replacement-issues" src="https://img.shields.io/github/issues/MBGratax/Eventful_FlatBlocks.svg?style=plastic" alt="issues" data-value="/../../"> 
     </a> 
-    &#9; 
+    &nbsp;&nbsp;
     <a href="/../../LICENSE.txt"> 
         <img class="image-replacement-license" src="https://img.shields.io/github/license/MBGratax/Eventful_FlatBlocks.svg?style=plastic" alt="license" data-value="/../../"> 
     </a> 
@@ -108,7 +108,7 @@ simplify the definition of targets and dependencies.
 
 ### Built With
 
-[![CMake][CMake]][CMake-url]
+[![CMake][CMake]][CMake-url] &nbsp;&nbsp;&nbsp;&nbsp;
 [![CPP][CPP]][CPP-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
