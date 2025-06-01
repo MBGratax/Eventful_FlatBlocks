@@ -8,7 +8,7 @@ add_executable(tests ${TEST_FILES})
 find_package(Catch2 CONFIG REQUIRED)
 target_link_libraries(tests PRIVATE Catch2::Catch2
         PRIVATE Catch2::Catch2WithMain
-        PUBLIC Eventful COMPILER_FLAGS)
+        PUBLIC EventfulEngine COMPILER_FLAGS)
 
 # Integrate Catch2 with CTest.
 include(CTest)

@@ -1,39 +1,174 @@
-# Eventful & FlatBlocks Project Repository
+<!-- BACK TO TOP ANCHOR -->
+<a id="readme-top"></a>
 
-|  General Info  | |
-| ---|---|
-| Working Title | Eventful & FlatBlocks |
-| Final Title | `Edit me!` |
-| Student | Jonas Häfner, jonas.haefner@stud-mail.uni-wuerzburg.de, s370214 |
-| Target Platform(s) | Windows |
-| Start Date | 2024 |
-| Study Program | Games Engineering B.Sc.|
+<!-- PROJECT SHIELDS -->
+
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![Unlicense License][license-shield]][license-url]
+
+<!-- Experimental, see if I can both center and use this in html. -->
+
+<div style="align-content: center; text-align: center">
+    <a href="/../../stargazers">
+        <img src="https://img.shields.io/github/stars/MBGratax/Eventful_FlatBlocks.svg?style=plastic" alt="Stargazers">
+    </a>
+    &middot;
+    <a href="/../../issues">
+        <img src="https://img.shields.io/github/issues/MBGratax/Eventful_FlatBlocks.svg?style=plastic" alt="Stargazers">
+    </a>
+    &middot;
+    <a href="/../../LICENSE.txt">
+        <img src="https://img.shields.io/github/license/MBGratax/Eventful_FlatBlocks.svg?style=plastic" alt="Stargazers">
+    </a>
+</div>
+
+<!-- PROJECT LOGO -->
+<br />
+<div style="align-content: center; text-align: center">
+  <a href="/../../">
+    <img src="Resources/placeholderIcon.png" alt="Logo" width="96" height="96">
+  </a>
+
+<h1 style="align-content: center; text-align: center">Eventful Engine & FlatBlocks</h1>
+
+  <p style="align-content: center; text-align: center">
+    A general purpose game engine!
+    <br />
+    <a href="/../../wiki"><strong>Explore the docs »</strong></a>
+    <br />
+    <br />
+<!--
+Commented out for now, add link to trailer, bug report and feature request later
+    <a href="https:">View Trailer</a>
+    &middot;
+    <a href="https:">Report Bug</a>
+    &middot;
+    <a href="https:">Request Feature</a>
+-->  
+</p>
+</div>
+
+### Eventful & FlatBlocks
+
+| General Info       |                                                                 |
+|--------------------|-----------------------------------------------------------------|
+| Working Title      | Eventful & FlatBlocks                                           |
+| Final Title        | `Edit me!`                                                      |
+| Student            | Jonas Häfner, jonas.haefner@stud-mail.uni-wuerzburg.de, s370214 |
+| Target Platform(s) | Windows                                                         |
+| Start Date         | 2024                                                            |
+| Study Program      | Games Engineering B.Sc.                                         |
 
 ### Abstract
 
-`Insert your project description here, and keep it up-to-date.`
 
-`--- 8< --- READ, THEN REPLACE WITH CUSTOM CONTENT BELOW HERE --- 8< ---`
+[[_TOC_]]
 
-## Repository Usage Guides
+### About Eventful Engine
 
-```
-RepositoryRoot/
-    ├── README.md           // This should reflect your project 
-    │                       //  accurately, so always merge infor- 
-    │                       //  mation from your concept paper 
-    │                       //  with the readme
-    ├── builds/             // Archives (.zip) of built executables of your projects
-    │                       //  including (non-standard) dependencies
-    ├── code/
-    │   ├── engine/         // Place your project folder(s) here
-    │   ├── my-game-1/      // No un-used folders, no "archived" folders
-    │   ├── CMakeLists.txt  // e.g. if using CMake, this can be your project root
-    │   └── ...
-    ├── documentation/      // GL2/3 - Each project requires FULL documentation  
-    │                       //   i.e. API Docs, Handbook, Dev Docs
-    ├── poster/             // PDF of your Poster(s)
-    ├── report/             // PDF
-    └── trailer/            // .mp4 (final trailer, no raw material)
-```
+[![Product Name Screen Shot][product-screenshot]](https://example.com)
 
+The Eventful Engine is a small but powerful general-purpose multi-platform game engine. 
+Currently, there is only direct support for windows, but the engine architecture is based on modules and adapters,
+allowing easy extension and replacing of libraries and functionality.
+
+While we use CMake to configure, generate and build the project, it is set up to only require a single CMakeLists file that queries 
+for much simpler Eventful Modules, signified by .efmoddef files. These files behave very similar to C# assemblies and 
+simplify the definition of targets and dependencies.
+
+### Built With
+
+[![CMake][CMake]][CMake-url]
+[![CPP][CPP]][CPP-url]
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- GETTING STARTED -->
+## Getting Started
+
+Stub
+<!-- 
+Fill this out once we actually have a set in stone set up.
+### Prerequisites
+
+This is an example of how to list things you need to use the software and how to install them.
+* npm
+  ```sh
+  npm install npm@latest -g
+  ```
+
+### Installation
+
+_Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
+
+1. Get a free API Key at [https://example.com](https://example.com)
+2. Clone the repo
+   ```sh
+   git clone https://github.com/github_username/repo_name.git
+   ```
+3. Install NPM packages
+   ```sh
+   npm install
+   ```
+4. Enter your API in `config.js`
+   ```js
+   const API_KEY = 'ENTER YOUR API';
+   ```
+5. Change git remote url to avoid accidental pushes to base project
+   ```sh
+   git remote set-url origin github_username/repo_name
+   git remote -v # confirm the changes
+   ```
+-->
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+
+<!-- USAGE EXAMPLES 
+This should probably just point to the demo example project later?
+## Usage
+
+Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+
+_For more examples, please refer to the [Documentation](https://example.com)_
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+-->
+
+
+<!-- ROADMAP
+Keep this snippit for later ig?
+## Roadmap
+
+- [x] Crossed
+- [ ] not crossed
+
+See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a full list of proposed features (and known issues).
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+-->
+
+<!-- LICENSE
+Will add license later, for now keep this commented out
+## License
+
+Distributed under the Unlicense License. See `LICENSE.txt` for more information.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+ -->
+
+<!-- MARKDOWN LINKS & IMAGES -->
+[stars-shield]: https://img.shields.io/github/stars/MBGratax/Eventful_FlatBlocks.svg?style=plastic
+[stars-url]: [root]/stargazers
+[issues-shield]: https://img.shields.io/github/issues/MBGratax/Eventful_FlatBlocks.svg?style=plastic
+[issues-url]: [root]/issues
+[license-shield]: https://img.shields.io/github/license/MBGratax/Eventful_FlatBlocks.svg?style=plastic
+[license-url]: [root]/LICENSE.txt
+[product-screenshot]: Resources/placeholderIcon.png
+[CPP]: https://img.shields.io/badge/cpp-000000?style=for-the-badge&logo=cplusplus&logoColor=white
+[CPP-url]: https://isocpp.org
+[CMake]: https://img.shields.io/badge/Cmake-20232A?style=for-the-badge&logo=cmake&logoColor=61DAFB
+[CMake-url]: https://cmake.org
+<!-- Grab the project root regardless of vendor (Gitlab/GitHub), experimental -->
+[root]: /../../
