@@ -12,6 +12,8 @@
 ~$*.ppt*
 *.swp
 
+.idea/*
+
 # Ignore all files in the builds directory
 builds/*
 # But allow zip archives to be tracked

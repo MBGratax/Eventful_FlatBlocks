@@ -11,12 +11,15 @@
       "displayName": "Default Config",
       "description": "Default build using multiconfig VS generator",
       "generator": "Visual Studio 17 2022",
-      "binaryDir": "${sourceDir}/../builds/FlatBlocksBin",
+      "binaryDir": "${sourceDir}/FlatBlocksProject",
       "installDir": "${sourceDir}/../builds/FlatBlocksBuild",
       "toolchainFile": "${sourceDir}/Extern/vcpkg/scripts/buildsystems/vcpkg.cmake",
+      "environment": {
+        "CMAKE_CONFIGURATION_TYPES": "Debug;Release;RelWithDebInfo;MinSizeRel"
+      },
       "cacheVariables": {
         "CMAKE_CXX_STANDARD": "20",
-        "PREPROCESSORS": "$<$<CONFIG:Debug>:EF_RELEASE=0;EF_DEBUG_BUILD=1;EF_LOGS_ENABLED=1>;$<$<CONFIG:RelWithDebInfo>:EF_RELEASE=1;EF_DEBUG_BUILD=0;EF_LOGS_ENABLED=1>;$<$<CONFIG:Release>:EF_RELEASE=1;EF_DEBUG_BUILD=0;EF_LOGS_ENABLED=0>"
+        "PREPROCESSORS": "$<$<CONFIG:Debug>:EVENTFUL_RELEASE=0;EVENTFUL_DEBUG=1;EVENTFUL_LOGS_ENABLED=1>;$<$<CONFIG:RelWithDebInfo>:EVENTFUL_RELEASE=1;EVENTFUL_DEBUG=0;EVENTFUL_LOGS_ENABLED=1>;$<$<CONFIG:Release>:EVENTFUL_RELEASE=1;EVENTFUL_DEBUG=0;EVENTFUL_LOGS_ENABLED=0>"
       },
       "vendor": {
         "jetbrains.com/clion": {
