@@ -3,25 +3,44 @@
 
 <!-- PROJECT SHIELDS -->
 
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![Unlicense License][license-shield]][license-url]
+<!-- Hacky attempt to make conditional image replacements, the link should already be kind of correct? -->
+<style type="text/css">
+    .image-replacement-stars[data-value="https://gitlab2.informatik.uni-wuerzburg.de/GE/Teaching/gl3/projects/2024/28-gl3-haefner/-/"]{
+        display: block;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        background: url(https://img.shields.io/gitlab/stars/https%3A%2F%2Fgitlab2.informatik.uni-wuerzburg.de%2FGE%2FTeaching%2Fgl3%2Fprojects%2F2024%2F28-gl3-haefner.svg?style=plastic)
+        no-repeat;
+    }
+    .image-replacement-issues[data-value="https://gitlab2.informatik.uni-wuerzburg.de/GE/Teaching/gl3/projects/2024/28-gl3-haefner/-/"]{
+        display: block;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        background: url(https://img.shields.io/gitlab/issues/https%3A%2F%2Fgitlab2.informatik.uni-wuerzburg.de%2FGE%2FTeaching%2Fgl3%2Fprojects%2F2024%2F28-gl3-haefner.svg?style=plastic)
+        no-repeat;
+    }
+    .image-replacement-license[data-value="https://gitlab2.informatik.uni-wuerzburg.de/GE/Teaching/gl3/projects/2024/28-gl3-haefner/-/"]{
+        display: block;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        background: url(https://img.shields.io/gitlab/license/https%3A%2F%2Fgitlab2.informatik.uni-wuerzburg.de%2FGE%2FTeaching%2Fgl3%2Fprojects%2F2024%2F28-gl3-haefner.svg?style=plastic)
+        no-repeat;
+    }
+</style>
 
-<!-- Experimental, see if I can both center and use this in html. -->
-
-<div style="align-content: center; text-align: center">
-    <a href="/../../stargazers">
-        <img src="https://img.shields.io/github/stars/MBGratax/Eventful_FlatBlocks.svg?style=plastic" alt="Stargazers">
-    </a>
-    &middot;
-    <a href="/../../issues">
-        <img src="https://img.shields.io/github/issues/MBGratax/Eventful_FlatBlocks.svg?style=plastic" alt="Stargazers">
-    </a>
-    &middot;
-    <a href="/../../LICENSE.txt">
-        <img src="https://img.shields.io/github/license/MBGratax/Eventful_FlatBlocks.svg?style=plastic" alt="Stargazers">
-    </a>
-</div>
+<div align="center"> 
+    <a href="/../../stargazers"> 
+        <img class="image-replacement-stars" src="https://img.shields.io/github/stars/MBGratax/Eventful_FlatBlocks.svg?style=plastic" alt="stars"  data-value="/../../"> 
+    </a> 
+    &#9;
+    <a href="/../../issues"> 
+        <img class="image-replacement-issues" src="https://img.shields.io/github/issues/MBGratax/Eventful_FlatBlocks.svg?style=plastic" alt="issues" data-value="/../../"> 
+    </a> 
+    &#9; 
+    <a href="/../../LICENSE.txt"> 
+        <img class="image-replacement-license" src="https://img.shields.io/github/license/MBGratax/Eventful_FlatBlocks.svg?style=plastic" alt="license" data-value="/../../"> 
+    </a> 
+</div> 
 
 <!-- PROJECT LOGO -->
 <br />
@@ -159,12 +178,6 @@ Distributed under the Unlicense License. See `LICENSE.txt` for more information.
  -->
 
 <!-- MARKDOWN LINKS & IMAGES -->
-[stars-shield]: https://img.shields.io/github/stars/MBGratax/Eventful_FlatBlocks.svg?style=plastic
-[stars-url]: [root]/stargazers
-[issues-shield]: https://img.shields.io/github/issues/MBGratax/Eventful_FlatBlocks.svg?style=plastic
-[issues-url]: [root]/issues
-[license-shield]: https://img.shields.io/github/license/MBGratax/Eventful_FlatBlocks.svg?style=plastic
-[license-url]: [root]/LICENSE.txt
 [product-screenshot]: Resources/placeholderIcon.png
 [CPP]: https://img.shields.io/badge/cpp-000000?style=for-the-badge&logo=cplusplus&logoColor=white
 [CPP-url]: https://isocpp.org
