@@ -1,9 +1,10 @@
 image: kitware/cmake:latest
 
 variables:
-  TIMESTAMP: $(date +%T_%d.%m.%y)
-  BUILD_ROOT: "$CI_PROJECT_DIR"/builds
-  BUILD_DIR: "$BUILD_ROOT"/Nightly-"$TIMESTAMP"
+  FF_TIMESTAMPS: true
+  TIMESTAMP: "$(date +%T_%d.%m.%y)"
+  BUILD_ROOT: '"$CI_PROJECT_DIR"/builds'
+  BUILD_DIR: '"$BUILD_ROOT"/Nightly-"$TIMESTAMP"'
 
 stages:
   - build
@@ -13,24 +14,24 @@ stages:
 build:
   stage: build
   script:
+    - echo "Starting '$CI_JOB_STAGE' with root '$BUILD_ROOT' and nightly path '$BUILD_DIR'"
     - cmake --preset Default -S code -B "$BUILD_DIR"
     - cmake --preset Build --build "$BUILD_DIR"
   artifacts:
     paths:
-      - $BUILD_DIR
+      - "$BUILD_DIR"
     expire_in: 1 week
     when: on_success
 
 test:
   stage: test
   script:
-    - cd $BUILD_DIR
+    - cd "$BUILD_DIR"
     - ctest --output-on-failure || echo "Some tests failed, but continuing because allow_failure is set."
   dependencies:
     - build
   allow_failure: true
   artifacts:
-    paths: []
     when: always
 
 release:
@@ -40,7 +41,7 @@ release:
   artifacts:
     # Adjust the pattern as needed (CPack will generate an installer/archive, e.g., .zip)
     paths:
-      - $CI_BUILDS_DIR/builds/nightly$TIMESTAMP.zip
+      - '"$CI_BUILDS_DIR"/builds/nightly"$TIMESTAMP".zip'
   dependencies:
     - build
     - test

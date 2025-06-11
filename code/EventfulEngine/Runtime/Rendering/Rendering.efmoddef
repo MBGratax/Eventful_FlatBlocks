@@ -1,0 +1,33 @@
+{
+  "Module Name": "EFRendering",
+  "Module Version": "0.1.0",
+  "Target Type": "SHARED_LIBRARY",
+  "Include Platform": [],
+  "Exclude Platform": [],
+  "Defines": [
+    "EF_RENDERING_ENABLED"
+  ],
+  "Dependencies": [
+    {
+      "Dependency Type": "PUBLIC",
+      "Library Name": "EFPlatform"
+    },
+    {
+      "Dependency Type": "PRIVATE",
+      "Library Name": "glfw"
+    },
+    {
+      "Dependency Type": "PRIVATE",
+      "Library Name": "glad::glad"
+    },
+    {
+      "Dependency Type": "PRIVATE",
+      "Library Name": "glm::glm"
+    },
+    {
+      "Dependency Type": "PRIVATE",
+      "Library Name": "Stb_INCLUDE_DIR"
+    }
+  ]
+}
+

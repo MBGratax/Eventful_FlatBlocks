@@ -1,10 +1,10 @@
 # Doxyfile.in – template for Doxygen documentation
 PROJECT_NAME           = "Eventful Engine"
-PROJECT_NUMBER         = "0.1.0_86d9cfe-dirty"
+PROJECT_NUMBER         = "@PROJECT_VERSION@"
 PROJECT_BRIEF          = "A General Purpose Event Driven Game Engine"
 # PROJECT_LOGO	       = 55x200px logo
 # PROJECT_ICON         = HTML TAB ICON
-OUTPUT_DIRECTORY       = "D:/GameLabs/GLIII_Eventful_FlatBlocks/code/../documentation"
+OUTPUT_DIRECTORY       = "@CMAKE_CURRENT_SOURCE_DIR@/../documentation"
 CREATE_SUBDIRS         = YES
 CREATE_SUBDIRS_LEVEL   = 0 # 0 means 16 dirs deep increasing up to 4096 at level 8
 OUTPUT_LANGUAGE        = English
@@ -13,7 +13,7 @@ REPEAT_BRIEF           = NO
 MARKDOWN_SUPPORT       = YES
 TOC_INCLUDE_HEADINGS   = 3
 AUTOLINK_SUPPORT       = YES
-INPUT                  = "D:/GameLabs/GLIII_Eventful_FlatBlocks/code"
+INPUT                  = "@CMAKE_CURRENT_SOURCE_DIR@"
 RECURSIVE              = YES
 GENERATE_HTML          = YES
 GENERATE_LATEX         = NO

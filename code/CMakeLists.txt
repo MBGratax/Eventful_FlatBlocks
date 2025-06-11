@@ -22,7 +22,7 @@ set(CMAKE_DEBUG_POSTFIX d)
 
 set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
 
-option(DEBUG_CMAKELIST "Receive CMake Debug messages" ON)
+option(DEBUG_CMAKELIST "Receive CMake Debug messages" OFF)
 
 if (DEBUG_CMAKELIST)
     set(CMAKE_MESSAGE_LOG_LEVEL "DEBUG")
@@ -35,9 +35,7 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 if (PROJECT_IS_TOP_LEVEL)
     option(EVENTFUL_BUILD_UNIT_TESTS "Build the Eventful_FlatBlocks unit tests" ON)
     option(EVENTFUL_BUILD_DOCS "Build the Eventful_FlatBlocks documentation" ON)
-    option(EVENTFUL_USER_SETTINGS "Override EVENTFUL settings with EFUserSettings.h" OFF)
 
-    option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
     include(GNUInstallDirs)
 endif ()
 
@@ -96,6 +94,7 @@ endif ()
 message(STATUS "Project version: ${PROJECT_VERSION}")
 
 # Generate configuration header for versioning.
+# TODO: Move to custom build command that runs on build
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 # -------------------------------------------------------------------------
 
@@ -122,6 +121,7 @@ foreach (MODULE_DEFINITION IN LISTS EFMODDEF_PATHS)
     message(STATUS "New Target: ${MODULE_DEFINITION}")
     cmake_path(GET MODULE_DEFINITION PARENT_PATH MOD_DIR)
 
+    # TODO: Add custom command to only reconfigure a single module
     # 2.1) Read JSON properties; TODO: Handle empty strings better, clearer parsing
     file(READ ${MODULE_DEFINITION} MOD_JSON)
 
@@ -341,15 +341,26 @@ foreach (MODULE_DEFINITION IN LISTS EFMODDEF_PATHS)
         add_library(${${MODULE_NAME}_TARGET} STATIC ${${MODULE_NAME}_HEADER} ${${MODULE_NAME}_SOURCE})
     elseif (TARGET_TYPE STREQUAL "SHARED_LIBRARY")
         add_library(${${MODULE_NAME}_TARGET} SHARED ${${MODULE_NAME}_HEADER} ${${MODULE_NAME}_SOURCE})
-        generate_export_header(${${MODULE_NAME}_TARGET})
+        string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
+        generate_export_header(${${MODULE_NAME}_TARGET}
+                BASE_NAME ${MODULE_NAME}ModuleAPI
+                EXPORT_MACRO_NAME ${MODULE_NAME_UPPER}_API
+                EXPORT_FILE_NAME Exports/${MODULE_NAME}ModuleAPI.h
+                INCLUDE_GUARD_NAME ${MODULE_NAME_UPPER}_MODULE_API
+        )
+        install(TARGETS ${${MODULE_NAME}_TARGET} LIBRARY DESTINATION Modules PUBLIC_HEADER DESTINATION include)
+        install(FILES "${CMAKE_BINARY_DIR}/Exports/${MODULE_NAME}ModuleAPI.h" DESTINATION include)
     elseif (TARGET_TYPE STREQUAL "EXECUTABLE")
         add_executable(${${MODULE_NAME}_TARGET} ${${MODULE_NAME}_HEADER} ${${MODULE_NAME}_SOURCE})
+        install(TARGETS ${${MODULE_NAME}_TARGET} RUNTIME DESTINATION bin)
     else ()
         message(CHECK_FAIL "Unknown TargetType '${TARGET_TYPE}' in ${MOD_DEF}")
     endif ()
-
+    list(APPEND ${MODULE_NAME}_PUBLIC_INCLUDES
+            $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/Exports>
+    )
     set_target_properties(${${MODULE_NAME}_TARGET} PROPERTIES
-            POSITION_INDEPENDENT_CODE ${BUILD_SHARED_LIBS}
+            POSITION_INDEPENDENT_CODE BUILD_SHARED_LIBS
     )
     message(CHECK_PASS "${MODULE_NAME}: Target successfully created!")
 
@@ -493,9 +504,6 @@ foreach (TARGET IN LISTS ALL_MODULE_TARGETS)
     message(CHECK_PASS "${TARGET}: Pass 2 end")
 endforeach ()
 
-#add_subdirectory(EventfulEngine)
-#add_subdirectory(Game)
-
 # (Optional) Enable testing if a tests/ directory is added later.
 if (EVENTFUL_BUILD_UNIT_TESTS)
     enable_testing()
@@ -510,20 +518,17 @@ include(CPack)
 # Documentation generation using Doxygen.
 find_package(Doxygen REQUIRED)
 if (DOXYGEN_FOUND)
-    # The Doxyfile.in template is in the docs folder (sibling to code/).
-    set(DOXYGEN_IN "${CMAKE_CURRENT_SOURCE_DIR}/../documentation/Doxyfile.in")
+    set(DOXYGEN_IN "${CMAKE_CURRENT_SOURCE_DIR}/Config/Doxyfile.in")
     set(DOXYGEN_OUT "${CMAKE_CURRENT_SOURCE_DIR}/../documentation/Doxyfile")
     configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
 
     add_custom_target(doc_doxygen ALL
             COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-            COMMENT "Generating API documentation with Doxygen"
+            COMMENT "Generate API documentation with Doxygen"
             VERBATIM)
 endif ()
 
-# add the install targets
-install(TARGETS ${EXECUTABLE} DESTINATION bin)
 install(FILES "${PROJECT_BINARY_DIR}/Config.h"
         DESTINATION include
 )
