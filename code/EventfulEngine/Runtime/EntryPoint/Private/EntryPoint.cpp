@@ -5,6 +5,8 @@
 #include "EventfulEngineLoop.h"
 #include "CoreGlobals.h"
 
+#include "GenericPlatform/GenericPlatformTime.h"
+
 namespace EventfulEngine{
 	EventfulEngineLoop g_engineLoop;
 
@@ -51,6 +53,9 @@ namespace EventfulEngine{
 	int32 GenericMain(){
 		// In-method struct that calls engine exit whenever the scope is left
 		struct EngineLoopCleanupGuard{
+
+			NOMOVEORCOPY(EngineLoopCleanupGuard)
+
 			~EngineLoopCleanupGuard(){
 				EngineExit();
 			}
@@ -59,7 +64,7 @@ namespace EventfulEngine{
 		EngineLoopCleanupGuard cleanupGuard;
 
 		// PreInit code (use cmd stuff, load modules, etc)
-		int32 ErrorLevel = BeforeEngineInit(nullptr);
+		int32 ErrorLevel = BeforeEngineInit("");
 
 		// exit if PreInit failed, or engine was immediately requested to stop.
 		if (ErrorLevel != 0 || IsEngineExitRequested()){
@@ -77,9 +82,10 @@ namespace EventfulEngine{
 				ErrorLevel = EngineInit();
 			}
 		}
+		EFPlatformTime::Init();
+		double EngineInitializationTime = EFPlatformTime::lastTime - g_startTime;
 
-		double EngineInitializationTime = FPlatformTime::Seconds() - g_startTime;
-
+		// If we are embedded i.e., in the editor or another custom application, let them handle the engine ticking
 		if (!g_gameEditorOverrides.bIsEmbedded){
 			while (!IsEngineExitRequested()){
 				EngineTick();

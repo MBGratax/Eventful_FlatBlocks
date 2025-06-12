@@ -7,30 +7,6 @@
   "Defines": [],
   "Dependencies": [
     {
-      "Dependency Type": "PRIVATE",
-      "Library Name": "spdlog::spdlog"
-    },
-    {
-      "Dependency Type": "PRIVATE",
-      "Library Name": "glfw"
-    },
-    {
-      "Dependency Type": "PRIVATE",
-      "Library Name": "EnTT::EnTT"
-    },
-    {
-      "Dependency Type": "PRIVATE",
-      "Library Name": "glad::glad"
-    },
-    {
-      "Dependency Type": "PRIVATE",
-      "Library Name": "imgui::imgui"
-    },
-    {
-      "Dependency Type": "PUBLIC",
-      "Library Name": "EFECS"
-    },
-    {
       "Dependency Type": "PUBLIC",
       "Library Name": "EFPhysics"
     },

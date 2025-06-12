@@ -20,5 +20,5 @@ namespace EventfulEngine{
         g_shouldRequestExit = true;
     }
 
-    double g_startTime = PlatformTime::InitTiming();
+    double g_startTime = EFPlatformTime::InitTiming();
 }

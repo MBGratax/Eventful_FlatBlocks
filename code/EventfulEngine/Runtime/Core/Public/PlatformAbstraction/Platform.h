@@ -17,5 +17,6 @@
 
 // This makes it so we are always safe to include Platform.h if we need platform specific code
 #include "GenericPlatform/GenericPlatform.h"
-#include CONCATPLATFORMHEADER(Platform.h)
+// Commented out until we actually need platform specific code
+//#include CONCATPLATFORMHEADER(Platform.h)
 

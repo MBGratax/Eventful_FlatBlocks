@@ -14,6 +14,8 @@
 
 .idea/*
 
+#Ignore documentation for now since it will change wildly
+documentation/*
 documentation/Doxyfile
 
 # Ignore all files in the builds directory

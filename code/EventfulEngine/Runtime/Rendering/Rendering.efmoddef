@@ -9,10 +9,6 @@
   ],
   "Dependencies": [
     {
-      "Dependency Type": "PUBLIC",
-      "Library Name": "EFPlatform"
-    },
-    {
       "Dependency Type": "PRIVATE",
       "Library Name": "glfw"
     },
