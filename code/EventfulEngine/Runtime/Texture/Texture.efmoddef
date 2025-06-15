@@ -1,0 +1,19 @@
+{
+  "Module Name": "EFTexture",
+  "Module Version": "0.1.0",
+  "Target Type": "SHARED_LIBRARY",
+  "Include Platform": [],
+  "Exclude Platform": [],
+  "Defines": [],
+  "Dependencies": [
+    {
+      "Dependency Type": "PRIVATE",
+      "Library Name": "EFCore"
+    },
+    {
+      "Dependency Type": "PUBLIC",
+      "Library Name": "EFImage"
+    }
+  ]
+}
+

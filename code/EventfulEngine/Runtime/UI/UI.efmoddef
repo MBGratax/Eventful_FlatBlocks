@@ -5,6 +5,11 @@
   "Include Platform": [],
   "Exclude Platform": [],
   "Defines": [],
-  "Dependencies": []
+  "Dependencies": [
+    {
+      "Dependency Type": "PUBLIC",
+      "Library Name": "imgui::imgui"
+    }
+  ]
 }
 

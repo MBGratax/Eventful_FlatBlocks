@@ -23,6 +23,34 @@
     {
       "Dependency Type": "PRIVATE",
       "Library Name": "Stb_INCLUDE_DIR"
+    },
+    {
+      "Dependency Type": "PUBLIC",
+      "Library Name": "EFCore"
+    },
+    {
+      "Dependency Type": "PUBLIC",
+      "Library Name": "EFEngine"
+    },
+    {
+      "Dependency Type": "PRIVATE",
+      "Library Name": "EFShader"
+    },
+    {
+      "Dependency Type": "PRIVATE",
+      "Library Name": "EFMaterial"
+    },
+    {
+      "Dependency Type": "PRIVATE",
+      "Library Name": "EFRenderCore"
+    },
+    {
+      "Dependency Type": "PRIVATE",
+      "Library Name": "EFRenderAPI"
+    },
+    {
+      "Dependency Type": "PRIVATE",
+      "Library Name": "EFApplication"
     }
   ]
 }

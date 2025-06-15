@@ -1,6 +1,6 @@
 #pragma once
 
-namespace EventfulEngine::Core{
+namespace EventfulEngine{
 
     /*!
      * @brief IManager provides a generic Manager/Singleton Interface. These objects only ever have one instance and can be accessed as long as you know the type.

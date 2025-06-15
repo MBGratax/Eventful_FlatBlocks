@@ -1,7 +1,10 @@
 #pragma once
 
+// TODO: Structs for ClassData, PropertyData and MethodData
 
-/*!
+/*! TODO: Improve this macro
+ * TODO: Introduce EFPROPERTY and EFMETHOD macros to reflect those
+ * TODO: Make DECLAREREFLECT macro to put into one C++ file to autoregister the whole class
  * @brief A class body generator macro that generates some generic groundwork and initializes the class in the reflection register
  * @param ClassName The name of the class this belongs to
  * @param ParentName The parent class of this class

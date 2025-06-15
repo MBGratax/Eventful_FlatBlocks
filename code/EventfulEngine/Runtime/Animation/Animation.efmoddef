@@ -5,6 +5,15 @@
   "Include Platform": [],
   "Exclude Platform": [],
   "Defines": [],
-  "Dependencies": []
+  "Dependencies": [
+    {
+      "Dependency Type": "PRIVATE",
+      "Library Name": "EFCore"
+    },
+    {
+      "Dependency Type": "PRIVATE",
+      "Library Name": "EFEngine"
+    }
+  ]
 }
 

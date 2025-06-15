@@ -1,5 +1,7 @@
 #pragma once
 
+// TODO: Keep updated with useful macros
+
 #define NOMOVE(ClassName)                           \
 ClassName& operator=(ClassName&& other) = delete;
 

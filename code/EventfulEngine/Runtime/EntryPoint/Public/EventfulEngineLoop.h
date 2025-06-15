@@ -7,14 +7,8 @@
 #endif
 
 #if WITH_ENGINE
-#include "EventfulEngine.h"
+#include "../../Engine/Public/Engine/EventfulEngine.h"
 #endif
-
-class FEngineService;
-class FTraceService;
-class FPendingCleanupObjects;
-class ISessionService;
-class FSlateRenderer;
 
 /*!When the entry point is hit, it creates an EventfulEngineLoop. This loop initializes everything it needs until it
  * passes its duty to other subsystems. It handles loading modules in the correct sequence, and initializing the Editor and Game Instance if needed.
@@ -117,40 +111,6 @@ namespace EventfulEngine{
 	 * This function called outside guarded exit code, during all exits (including error exits).
 	 */
 		static void AppExit();
-
-	private:
-		/** Utility function that processes Slate operations. */
-		void ProcessLocalPlayerSlateOperations() const;
-
-		/** Holds a dynamically expanding array of frame times in milliseconds (if FApp::IsBenchmarking() is set). */
-		std::vector<float> FrameTimes{};
-
-		/** Holds the total time spent ticking engine. */
-		double TotalTickTime{};
-		/** Holds the maximum number of seconds engine should be ticked. */
-		double MaxTickTime{};
-
-		/** Holds the maximum number of frames to render in benchmarking mode. */
-		uint64_t MaxFrameCounter{};
-
-		/** Holds the number of cycles in the last frame. */
-		uint32_t LastFrameCycles{};
-
-#if WITH_ENGINE
-
-		/** Holds the objects which need to be cleaned up when the rendering thread finishes the previous frame. */
-		FPendingCleanupObjects* PendingCleanupObjects{};
-
-		/** Holds the engine service. */
-		FEngineService* EngineService{};
-
-		/** Trace control service */
-		FTraceService* TraceService{};
-
-		/** Holds the application session service. */
-		std::shared_ptr<ISessionService> SessionService{};
-
-#endif // WITH_ENGINE
 	};
 
 	// Declare global engine loop

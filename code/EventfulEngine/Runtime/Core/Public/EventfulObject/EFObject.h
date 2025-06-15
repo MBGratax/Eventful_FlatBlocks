@@ -1,7 +1,11 @@
 #pragma once
 
-namespace EventfulEngine::Core {
-class EFObject {
+namespace EventfulEngine{
+    /*!
+     * @brief A base object class for all managed objects in Eventful.
+     */
+    class EFObject{
+        // TODO: Delete Constructor, Use memory system to create sharedpointer
 
-};
+    };
 }

@@ -2,5 +2,5 @@
 
 #include "../../Public/EventfulObject/EFObject.h"
 
-namespace EventfulEngine::Core {
+namespace EventfulEngine{
 }
