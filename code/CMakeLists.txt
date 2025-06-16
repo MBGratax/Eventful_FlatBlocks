@@ -33,7 +33,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 if (PROJECT_IS_TOP_LEVEL)
-    option(EVENTFUL_BUILD_UNIT_TESTS "Build the Eventful_FlatBlocks unit tests" ON)
+    option(EVENTFUL_BUILD_UNIT_TESTS "Build the Eventful_FlatBlocks unit tests" OFF)
     option(EVENTFUL_BUILD_DOCS "Build the Eventful_FlatBlocks documentation" ON)
 
     include(GNUInstallDirs)
@@ -486,7 +486,7 @@ foreach (TARGET IN LISTS ALL_MODULE_TARGETS)
     )
 
     if ("${TARGET}" STREQUAL "EFEntryPoint")
-        target_link_options("${TARGET}" PUBLIC "/ENTRY:mainCRTStartup;/SUBSYSTEM:WINDOWS")
+        target_link_options("${TARGET}" PUBLIC "/SUBSYSTEM:WINDOWS")
     endif ()
 
     get_target_property(LINK_LIBS ${TARGET} LINK_LIBRARIES)
