@@ -6,7 +6,6 @@
 
 #include "Platform.h"
 #include "CoreMacros.h"
-#include "PlatformTime.h"
 
 // TODO: Instead of abusing these using directives, actually make our own way to handle strings, chars and ints etc. For now this is a workaround to save on immediate work
 using uint32 = uint32_t;
@@ -20,3 +19,5 @@ using EFClock = std::chrono::high_resolution_clock;
 using SystemClock = std::chrono::system_clock;
 using EFTimePoint = EFClock::time_point;
 using EFDuration = EFClock::duration;
+
+#include "PlatformTime.h"

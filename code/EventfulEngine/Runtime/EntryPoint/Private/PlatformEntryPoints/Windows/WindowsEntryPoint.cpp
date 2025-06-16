@@ -5,17 +5,17 @@
 #include "EventfulEngineLoop.h"
 
 namespace EventfulEngine{
-	extern int32 GenericMain(const TCHAR* CmdLine);
+	extern int32 GenericMain(const EFChar* CmdLine);
 
-	extern HINSTANCE g_hInstance;
+	//extern HINSTANCE g_hInstance;
 	EFENTRYPOINT_API int32 WindowsEntryPointStartUp(HINSTANCE hInInstance, HINSTANCE hPrevInstance, char*,
 	                                                int32 nCmdShow,
-	                                                const TCHAR* CmdLine){
+	                                                EFChar* CmdLine){
 		// TODO: Add Global Profiler marker start
 		// TODO: Log startup info
 
 		int32 ErrorLevel = 0;
-		g_hInstance = hInInstance;
+		//g_hInstance = hInInstance;
 
 		// TODO: Once we have commandline stuff, handle it here
 
@@ -30,9 +30,11 @@ namespace EventfulEngine{
 		EventfulEngineLoop::AppExit();
 	}
 
-	int32 WINAPI WinMain(HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, PSTR pCmdLine, int32 nCmdShow){
-		int32 Result = WindowsEntryPointStartUp(hInstance, hPrevInstance, pCmdLine, nCmdShow, nullptr);
-		WindowsEntryPointShutdown();
-		return Result;
-	}
+}
+
+int32 WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ char* pCmdLine,
+                     _In_ int32 nCmdShow){
+	int32 Result = EventfulEngine::WindowsEntryPointStartUp(hInstance, hPrevInstance, pCmdLine, nCmdShow, nullptr);
+	EventfulEngine::WindowsEntryPointShutdown();
+	return Result;
 }

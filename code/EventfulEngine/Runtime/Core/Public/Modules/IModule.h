@@ -6,44 +6,35 @@ namespace EventfulEngine{
     /*!
      * @brief Interface class to define an entry point for all modules. Initializes modules and provides important callbacks
      */
-class IModule{
-public:
+    class IModule{
+    public:
+        virtual ~IModule(){
+        }
 
 
-    virtual ~IModuleInterface()
-    {
-    }
+        virtual void StartupModule(){
+        }
 
 
-    virtual void StartupModule()
-    {
-    }
+        virtual void PreUnloadCallback(){
+        }
 
 
-    virtual void PreUnloadCallback()
-    {
-    }
+        virtual void PostLoadCallback(){
+        }
 
 
-    virtual void PostLoadCallback()
-    {
-    }
+        virtual void ShutdownModule(){
+        }
 
 
-    virtual void ShutdownModule()
-    {
-    }
+        virtual bool SupportsDynamicReloading(){
+            return true;
+        }
 
 
-    virtual bool SupportsDynamicReloading()
-    {
-        return true;
-    }
-
-
-    virtual bool SupportsAutomaticShutdown()
-    {
-        return true;
-    }
-};
+        virtual bool SupportsAutomaticShutdown(){
+            return true;
+        }
+    };
 }

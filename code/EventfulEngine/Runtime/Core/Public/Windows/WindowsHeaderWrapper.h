@@ -14,5 +14,3 @@
 #include <Windows.h>
 
 #undef WINDOWS_H_WRAPPER_GUARD
-
-#endif //PLATFORM_*

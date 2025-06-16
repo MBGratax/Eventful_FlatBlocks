@@ -485,6 +485,10 @@ foreach (TARGET IN LISTS ALL_MODULE_TARGETS)
             ${${TARGET}_PRIVATE_DEPENDENCIES}
     )
 
+    if ("${TARGET}" STREQUAL "EFEntryPoint")
+        target_link_options("${TARGET}" PUBLIC "/ENTRY:mainCRTStartup;/SUBSYSTEM:WINDOWS")
+    endif ()
+
     get_target_property(LINK_LIBS ${TARGET} LINK_LIBRARIES)
     message(DEBUG "${TARGET}: LINK_LIBRARIES: ${LINK_LIBS}")
     message(CHECK_PASS "${TARGET}: Success")

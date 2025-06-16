@@ -13,6 +13,22 @@
     {
       "Dependency Type": "PUBLIC",
       "Library Name": "EFCore"
+    },
+    {
+      "Dependency Type": "PUBLIC",
+      "Library Name": "EFEngine"
+    },
+    {
+      "Dependency Type": "PUBLIC",
+      "Library Name": "EFApplication"
+    },
+    {
+      "Dependency Type": "PUBLIC",
+      "Library Name": "EFUI"
+    },
+    {
+      "Dependency Type": "PUBLIC",
+      "Library Name": "EFEntryPoint"
     }
   ]
 }

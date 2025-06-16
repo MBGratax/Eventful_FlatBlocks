@@ -10,7 +10,7 @@
 namespace EventfulEngine{
 	EventfulEngineLoop g_engineLoop;
 
-#ifndef
+#ifndef WITH_EDITOR
 #define WITH_EDITOR 0
 #endif
 
@@ -50,7 +50,7 @@ namespace EventfulEngine{
 	 * @brief Generic main entry point that is invoked by the platform-specific entry point after setting up platform boilerplate
 	 * @return The usual 0 for success and >0 for error int
 	 */
-	int32 GenericMain(){
+	int32 GenericMain(const EFChar* CmdLine){
 		// In-method struct that calls engine exit whenever the scope is left
 		struct EngineLoopCleanupGuard{
 
@@ -83,7 +83,8 @@ namespace EventfulEngine{
 			}
 		}
 		EFPlatformTime::Init();
-		double EngineInitializationTime = EFPlatformTime::lastTime - g_startTime;
+		double EngineInitializationTime = EFPlatformTime::ToSeconds(
+			EFPlatformTime::lastTime - EFPlatformTime::appStartTime);
 
 		// If we are embedded i.e., in the editor or another custom application, let them handle the engine ticking
 		if (!g_gameEditorOverrides.bIsEmbedded){
