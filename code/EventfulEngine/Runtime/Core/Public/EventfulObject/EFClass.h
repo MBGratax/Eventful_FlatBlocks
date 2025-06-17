@@ -160,11 +160,11 @@ namespace EventfulEngine{
     template <typename Class, typename Member>
     constexpr std::size_t getMemberOffset(Member Class::* member) noexcept{
         // carve out a null pointer to Class:
-        const Class*   base       = nullptr;
+        const Class* base = nullptr;
         // interpret its address as a char*:
-        const auto baseChar   = reinterpret_cast<const char*>(base);
+        const auto baseChar = reinterpret_cast<const char*>(base);
         // apply the member-pointer to that fake object and take its address:
-        const auto memChar    = reinterpret_cast<const char*>(&(base->*member));
+        const auto memChar = reinterpret_cast<const char*>(&(base->*member));
         // pointer subtraction gives us the offset in bytes:
         return static_cast<std::size_t>(memChar - baseChar);
     }
@@ -173,7 +173,7 @@ namespace EventfulEngine{
     public:\
     using _objClass = ClassName;\
     using _superClass = ParentClassName;\
-    static EFClass _efClass;\
+    static EFClassPtr _efClass;\
     static const EFClass& StaticClass(){ return _efClass; }\
     inline static std::string _name{#ClassName};\
     static constexpr auto _efClassFlags = Flags;\
@@ -196,34 +196,45 @@ namespace EventfulEngine{
 friend bool __ReflectedClass_##ClassName();
 
 #define EFREGISTER(ClassName) \
-    bool __ReflectedClass_##ClassName();\
-    namespace { \
-        static const bool __ef_register_##ClassName = __ReflectedClass_##ClassName();\
-        }\
-    bool __ReflectedClass_##ClassName(){ \
-        using registeringClass = ClassName; \
-        auto clsHash = typeid(registeringClass).hash_code(); \
-        auto classData = EFReflectionManager::Get().GetClass(clsHash); \
-        if(!classData) { \
-            classData = EFReflectionManager::Get().RegisterClass( \
-            registeringClass::_name, clsHash, typeid(registeringClass::_superClass).hash_code()); \
-        }
-
-#define MEMBEROFFSET(Property)\
+    EFClassPtr ClassName::_efClass = nullptr;\
+    bool __ReflectedClass_##ClassName(){\
+    using registeringClass = ClassName;\
+    const auto clsHash = typeid(registeringClass).hash_code();\
+    registeringClass::_efClass = EFReflectionManager::Get().GetClass(clsHash);\
+    if (!registeringClass::_efClass){\
+        registeringClass::_efClass = EFReflectionManager::Get().RegisterClass(registeringClass::_name, clsHash,\
+                                                                      typeid(registeringClass::_superClass).\
+                                                                      hash_code());\
+    }
 
 #define EFPROPERTY(Property, Flags, ...)\
-    EFReflectionManager::Get().RegisterProperty( \
-    clsHash, {#Property, offsetof(registeringClass, Property), typeid(decltype(registeringClass::Property)).name(), Flags, {__VA_ARGS__}});
+    EFReflectionManager::Get()\
+    .RegisterProperty(clsHash,\
+                      {\
+                          #Property,\
+                          getMemberOffset(&registeringClass::Property),\
+                          typeid(decltype(registeringClass::Property)).name(),\
+                          Flags,\
+                          EFMetaDataList{__VA_ARGS__}\
+                      }\
+    );
 
 #define EFMETHOD(Method, Flags, ...) \
-    EFReflectionManager::Get().RegisterMethod( \
-        clsHash, {#Method, std::make_unique<EFCallable<decltype(&registeringClass::Method)>>(\
-            make_method_data(&registeringClass::Method)\
-        ),   \
-        Flags,                                                              \
-        {__VA_ARGS__}});
+    using MethodPointer = decltype(&registeringClass::Method);\
+    using CallableT = EFCallableMethod<MethodPointer>;\
+    auto methodData = make_method_data(&registeringClass::Method);\
+    auto efCallable = std::make_unique<CallableT>(methodData);\
+\
+    EFReflectionManager::Get()\
+    .RegisterMethod(clsHash,\
+                    EFMethod{\
+                        #Method,\
+                        std::move(efCallable),\
+                        Flags,\
+                        EFMetaDataList{__VA_ARGS__}\
+                    });
 
-#define BINDMETHODS(ClassName) \
+#define EFREGISTER_END(ClassName) \
     return true; \
     }
 

@@ -11,13 +11,13 @@ namespace EventfulEngine{
     /*!
      * @brief A base object class for all managed objects in Eventful.
      */
-    class EFObject{
+    class EFCORE_API EFObject{
 
     public:
         using _objClass = EFObject;
         using _superClass = EFObject;
-        static EFClass _efClass;
-        static const EFClass& StaticClass(){ return _efClass; }
+        static EFClassPtr _efClass;
+        static const EFClass& StaticClass(){ return *_efClass.get(); }
 
         inline static EFString _name{"EFObject"};
 
