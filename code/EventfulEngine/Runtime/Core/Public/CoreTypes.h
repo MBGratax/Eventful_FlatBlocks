@@ -15,6 +15,7 @@ using Ref = std::shared_ptr;
 using EFChar = char8_t;
 using int64 = int64_t;
 using uint64 = uint64_t;
+using uint8 = uint8_t;
 using EFClock = std::chrono::high_resolution_clock;
 using SystemClock = std::chrono::system_clock;
 using EFTimePoint = EFClock::time_point;

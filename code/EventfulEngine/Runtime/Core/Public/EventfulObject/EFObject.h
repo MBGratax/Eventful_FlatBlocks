@@ -1,15 +1,37 @@
 #pragma once
+#include <CoreTypes.h>
+#include <EFReflectionManager.h>
 #include <EfMemory.h>
 #include <cwchar>
 #include <string>
 #include <vector>
+#include "EFClass.h"
 
 namespace EventfulEngine{
     /*!
      * @brief A base object class for all managed objects in Eventful.
      */
     class EFObject{
+
     public:
+        using _objClass = EFObject;
+        using _superClass = EFObject;
+        static EFClass _efClass;
+        static const EFClass& StaticClass(){ return _efClass; }
+
+        inline static EFString _name{"EFObject"};
+
+        static constexpr auto _efClassFlags = E_ClassFlags::None;
+        static inline EFMetaDataList _efClassMetadata = EFMetaDataList{{"Category", {"Object"}}};
+        virtual const std::string& GetClassName() const{ return _name; }
+
+        virtual bool IsClass(const std::string& name) const{
+            if (EFReflectionManager::Get().GetClass(name) != nullptr){ return true; }
+            return false;
+        }
+
+        friend bool __ReflectedClass_EFObject();
+
         EFObject() = default;
 
         EFObject(const EFObject&) = delete;
@@ -23,7 +45,7 @@ namespace EventfulEngine{
         void operator delete(void* ptr){ EFMemory::Free(ptr); }
 
         template <typename T, typename... Args>
-        static EFSharedPtr<T> Create(EFObject* owner, const std::string& name, Args&&... args){
+        static EFSharedPtr<T> Create(EFObject const* owner, const EFString& name, Args&&... args){
             auto obj = MakeShared<T>(std::forward<Args>(args)...);
             obj->_owner = owner;
             obj->_objectName = name;
@@ -34,48 +56,56 @@ namespace EventfulEngine{
         template <typename T>
         static void Destroy(EFSharedPtr<T>& obj){ obj.reset(); }
 
-        bool IsValid() const{ return _bIsValid; }
+        [[nodiscard]] bool IsValid() const{ return _bIsValid; }
 
-        EFObject* GetOuter() const{ return _owner; }
+        [[nodiscard]] EFObject* GetOwner() const{ return _owner; }
         void SetOuter(EFObject* outer){ _owner = outer; }
 
-        const std::string& GetName() const{ return _objectName; }
-        void Rename(const std::string& newName){ _objectName = newName; }
+        [[nodiscard]] const EFString& GetName() const{ return _objectName; }
+        void Rename(const std::string_view newName){ _objectName = newName; }
 
-        std::string GetPath() const{
+        [[nodiscard]] EFString GetPath() const{
             if (_owner){ return _owner->GetPath() + "/" + _objectName; }
             return _objectName;
         }
 
         // Tagging -----------------------------------------------------------
-        void AddTag(const std::string& tag){
+        void AddTag(const EFString& tag){
             if (!HasTag(tag)) _tags.push_back(tag);
         }
 
-        bool HasTag(const std::string& tag) const{
+        [[nodiscard]] bool HasTag(const EFString& tag) const{
             return std::ranges::find(_tags, tag) != _tags.end();
         }
 
         void RemoveTag(const std::string& tag){
-            if (const auto it = std::remove(_tags.begin(), _tags.end(), tag); it != _tags.end())
+            if (const auto it = std::ranges::remove(_tags, tag).begin(); it != _tags.end())
                 _tags.erase(
                     it, _tags.end());
         }
 
-        const std::vector<std::string>& GetTags() const{ return _tags; }
+        [[nodiscard]] const std::vector<std::string>& GetTags() const{ return _tags; }
 
         // Duplication Hooks -------------------------------------------------
         virtual void PreDuplicate(const EFObject& source){
+            //stub
+            _bIsValid = false;
         }
 
         virtual void PostDuplicate(){
+            //stub
+            _bIsValid = true;
         }
 
         // Serialization & GC callbacks -------------------------------------
         virtual void Serialize(){
+            //stub
+            _bIsValid = true;
         }
 
         virtual void OnGC(){
+            //stub
+            _bIsValid = false;
         }
 
     protected:
