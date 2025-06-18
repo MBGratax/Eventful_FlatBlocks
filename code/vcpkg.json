@@ -6,11 +6,34 @@
     "catch2",
     "glfw3",
     "spdlog",
-    "entt",
     "glad",
     "imgui",
-    "bullet3",
+    {
+      "name": "joltphysics",
+      "default-features": false,
+      "features": [
+        "debugrenderer",
+        "profiler",
+        "rtti"
+      ]
+    },
     "glm",
-    "stb"
+    "stb",
+    "cxxopts",
+    "meshoptimizer",
+    {
+      "name": "tracy",
+      "default-features": false,
+      "features": [
+        "crash-handler"
+      ]
+    },
+    "openal-soft",
+    "sol2",
+    "freetype",
+    "assimp",
+    "nlohmann-json",
+    "shaderc",
+    "spirv-cross"
   ]
 }

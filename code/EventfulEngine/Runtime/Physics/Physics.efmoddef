@@ -8,18 +8,6 @@
   "Dependencies": [
     {
       "Dependency Type": "PRIVATE",
-      "Library Name": "BulletDynamics"
-    },
-    {
-      "Dependency Type": "PRIVATE",
-      "Library Name": "BulletCollision"
-    },
-    {
-      "Dependency Type": "PRIVATE",
-      "Library Name": "Bullet3Common"
-    },
-    {
-      "Dependency Type": "PRIVATE",
       "Library Name": "EFCore"
     }
   ]
