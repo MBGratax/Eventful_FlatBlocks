@@ -1,19 +1,21 @@
 #pragma once
-#include <EFEntryPointModuleAPI.h>
-#include <Windows/WindowsHeaderWrapper.h>
+#include "EFEntryPointModuleAPI.h"
+#include "Windows/WindowsHeaderWrapper.h"
+#include "CoreMinimal.h"
 
 #include "EventfulEngineLoop.h"
 
 namespace EventfulEngine{
 	extern int32 GenericMain(const EFChar* CmdLine);
 
+	EF_DEFINE_LOG_CATEGORY(CoreLog, "CoreLog.txt");
+
 	//extern HINSTANCE g_hInstance;
 	EFENTRYPOINT_API int32 WindowsEntryPointStartUp(HINSTANCE hInInstance, HINSTANCE hPrevInstance, char*,
 	                                                int32 nCmdShow,
-	                                                EFChar* CmdLine){
+	                                                const EFChar* CmdLine){
 		// TODO: Add Global Profiler marker start
-		// TODO: Log startup info
-
+		EF_LOG(CoreLog, info, "Starting up EventfulEngine on Windows!");
 		int32 ErrorLevel = 0;
 		//g_hInstance = hInInstance;
 

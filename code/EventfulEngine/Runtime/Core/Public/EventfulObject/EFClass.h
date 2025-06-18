@@ -2,6 +2,7 @@
 
 #include "CoreTypes.h"
 #include <any>
+#include "EnumFlag.h"
 
 // TODO: Test this
 /*

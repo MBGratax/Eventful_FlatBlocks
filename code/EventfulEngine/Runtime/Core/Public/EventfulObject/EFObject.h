@@ -1,11 +1,11 @@
 #pragma once
-#include <CoreTypes.h>
-#include <EFReflectionManager.h>
-#include <EfMemory.h>
+#include "CoreTypes.h"
+#include "EFReflectionManager.h"
+#include "EfMemory.h"
 #include <cwchar>
-#include <string>
 #include <vector>
 #include "EFClass.h"
+#include <algorithm>
 
 namespace EventfulEngine{
     /*!

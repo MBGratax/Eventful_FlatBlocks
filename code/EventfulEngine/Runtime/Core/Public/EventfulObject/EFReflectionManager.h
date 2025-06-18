@@ -1,8 +1,9 @@
 #pragma once
-#include <EfMemory.h>
+#include "EfMemory.h"
 
 #include "EFClass.h"
 #include "IManager.h"
+#include <unordered_map>
 
 namespace EventfulEngine{
     // Global Registry for Eventful Reflection, holds all Reflection data that was registered and provides methods to
