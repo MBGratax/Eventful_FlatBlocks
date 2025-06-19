@@ -3,6 +3,7 @@
 #include "CoreTypes.h"
 #include <any>
 #include "EnumFlag.h"
+#include <typeindex>
 
 // TODO: Test this
 /*
@@ -37,11 +38,73 @@ namespace EventfulEngine{
     };
 
     using EFMetaDataList = std::vector<EFMetaData>;
+    // TODO: Move Property and Method stuff into their own files, this is getting bloated
+    // TODO: REFACTOR: Change some void pointers to EFObject pointers, since only EFObjects and their children can even be reflected.
+    template <typename Member>
+    struct EFMemberPointer;
+
+    template <typename Class, typename Member>
+    struct EFMemberPointer<Member Class::*>{
+        using MemberPtr = Member Class::*;
+        using ClassType = Class;
+        using MemberType = Member;
+
+        MemberPtr varReference;
+
+        explicit EFMemberPointer(const MemberPtr varReference): varReference(varReference){
+        };
+
+        void Set(Class* reference, Member value) const{
+            reference->*varReference = value;
+        }
+
+        Member Get(const Class* reference) const{
+            return reference->*varReference;
+        };
+    };
+
+    // Deduction helper
+    template <typename MemberPtr>
+    auto MakeMemberData(MemberPtr m){
+        return EFMemberPointer<MemberPtr>{m};
+    }
+
+    struct EFAutoProperty{
+        virtual ~EFAutoProperty() = default;
+
+        virtual std::any Get(const void* obj) const = 0;
+
+        virtual void Set(void* obj, std::any value) = 0;
+    };
+
+    template <typename MemberPointer>
+    struct EFAutoPropertyImp final : EFAutoProperty{
+        using Traits = EFMemberPointer<MemberPointer>;
+        using ClassType = typename Traits::ClassType;
+        using MemberType = typename Traits::MemberType;
+
+        EFMemberPointer<MemberPointer> memberPointer;
+
+        explicit EFAutoPropertyImp(const EFMemberPointer<MemberPointer>& md) : memberPointer(md){
+        }
+
+        std::any Get(const void* obj) const override{
+            auto* instance = static_cast<const ClassType*>(obj);
+            MemberType value = memberPointer.Get(instance);
+            return value;
+        }
+
+        void Set(void* obj, std::any value) override{
+            auto* instance = static_cast<ClassType*>(obj);
+            MemberType memberValue = std::any_cast<MemberType>(value);
+            memberPointer.Set(instance, memberValue);
+        }
+    };
 
     struct EFProperty{
         std::string Name;
-        std::size_t Offset{0};
-        std::string TypeName;
+        std::shared_ptr<EFAutoProperty> AutoProperty;
+        std::type_index Type{typeid(void)};
         E_PropertyFlags Flags{E_PropertyFlags::None};
         EFMetaDataList MetaData;
     };
@@ -121,20 +184,19 @@ namespace EventfulEngine{
         }
 
     private:
-        template <typename T, typename MD, typename Ret, std::size_t... I>
-        std::any invokeInternal(void* raw, const std::vector<std::any>& args,
+        template <typename T, typename Sig, typename Ret, std::size_t... I>
+        std::any invokeInternal(T* obj, const std::vector<std::any>& args,
                                 std::index_sequence<I...>){
-            T* obj = static_cast<T*>(raw);
             // Unpack and cast each argument
-            if constexpr (std::is_void_v<typename MD::Return>){
+            if constexpr (std::is_void_v<typename Sig::Return>){
                 signature.invoke(obj,
-                                 std::any_cast<std::tuple_element_t<I, typename MD::ArgTypes>>(args[I])...
+                                 std::any_cast<std::tuple_element_t<I, typename Sig::ArgTypes>>(args[I])...
                 );
                 return {};
             }
             else{
                 Ret result = signature.invoke(obj,
-                                              std::any_cast<std::tuple_element_t<I, typename MD::ArgTypes>>(args[I])...
+                                              std::any_cast<std::tuple_element_t<I, typename Sig::ArgTypes>>(args[I])...
                 );
                 return result;
             }
@@ -152,23 +214,12 @@ namespace EventfulEngine{
         std::string Name;
         std::size_t Hash{0};
         std::size_t ParentHash{0};
+        std::type_index ClassType{typeid(void)};
         E_ClassFlags Flags{E_ClassFlags::None};
         std::vector<EFProperty> Properties;
         std::vector<EFMethod> Methods;
         EFMetaDataList MetaData;
     };
-
-    template <typename Class, typename Member>
-    constexpr std::size_t getMemberOffset(Member Class::* member) noexcept{
-        // carve out a null pointer to Class:
-        const Class* base = nullptr;
-        // interpret its address as a char*:
-        const auto baseChar = reinterpret_cast<const char*>(base);
-        // apply the member-pointer to that fake object and take its address:
-        const auto memChar = reinterpret_cast<const char*>(&(base->*member));
-        // pointer subtraction gives us the offset in bytes:
-        return static_cast<std::size_t>(memChar - baseChar);
-    }
 
 #define EFCLASS(ClassName, ParentClassName, Flags, ...)\
     public:\
@@ -185,36 +236,51 @@ namespace EventfulEngine{
         return IsClass(_superClass::_name);\
     }\
     private: \
-    struct __Registrar{ \
-    __Registrar(){ \
-    _efClass = EFReflectionManager::Get().RegisterClass( \
-    _name, \
-    typeid(ClassName).hash_code(), \
-    typeid(ParentClassName).hash_code()); \
+    struct _Registrar{ \
+    _Registrar(){ \
+    auto& efClassPtr = MakeShared<EFClass>()\
+    efClassPtr->Name = _name;\
+    efClassPtr->Hash =typeid(ClassName).hash_code();\
+    efClassPtr->ParentHash = typeid(ParentClassName).hash_code();\
+    efClassPtr->ClassType = typeid(ClassName);\
+    efClassPtr->Flags;\
+    efClassPtr->{__VA_ARGS__};\
+    _efClass = EFReflectionManager::Get().RegisterClass(efClassPtr); \
     } \
     }; \
-    inline static __Registrar __registrar;\
-friend bool __ReflectedClass_##ClassName();
+    inline static _Registrar _registrar;\
+friend bool _ReflectedClass_##ClassName();
 
 #define EFREGISTER(ClassName) \
+    bool _ReflectedClass_##ClassName();\
     EFClassPtr ClassName::_efClass = nullptr;\
-    bool __ReflectedClass_##ClassName(){\
+    bool _ReflectedClass_##ClassName(){\
     using registeringClass = ClassName;\
     const auto clsHash = typeid(registeringClass).hash_code();\
     registeringClass::_efClass = EFReflectionManager::Get().GetClass(clsHash);\
     if (!registeringClass::_efClass){\
-        registeringClass::_efClass = EFReflectionManager::Get().RegisterClass(registeringClass::_name, clsHash,\
-                                                                      typeid(registeringClass::_superClass).\
-                                                                      hash_code());\
+        auto efClassPtr = MakeShared<EFClass>();\
+        efClassPtr->Name = registeringClass::_name;\
+        efClassPtr->Hash = clsHash;\
+        efClassPtr->ParentHash = typeid(registeringClass::_superClass).hash_code();\
+        efClassPtr->ClassType = typeid(registeringClass);\
+        efClassPtr->Flags = registeringClass::_efClassFlags;\
+        efClassPtr->MetaData = registeringClass::_efClassMetadata;\
+        registeringClass::_efClass = EFReflectionManager::Get().RegisterClass(efClassPtr);\
     }
 
 #define EFPROPERTY(Property, Flags, ...)\
+using MemberPointer = decltype(&registeringClass::Property);\
+using AutoPropertyT = EFAutoPropertyImp<MemberPointer>;\
+auto memberData = MakeMemberData(&registeringClass::Property);\
+auto efAutoProperty = std::make_unique<AutoPropertyT>(memberData);\
+\
     EFReflectionManager::Get()\
     .RegisterProperty(clsHash,\
                       {\
                           #Property,\
-                          getMemberOffset(&registeringClass::Property),\
-                          typeid(decltype(registeringClass::Property)).name(),\
+                          std::move(efAutoProperty),\
+                          std::type_index{typeid(decltype(registeringClass::Property))},\
                           Flags,\
                           EFMetaDataList{__VA_ARGS__}\
                       }\

@@ -7,21 +7,23 @@
 namespace EventfulEngine{
 
     //TODO: Make sure either that CMake install rules guarantee this, or make CMake give us the path via Config Generator Defines!
-    std::filesystem::path FileSystem::GetAssetsPath(){
+    EFPath FileSystem::GetAssetsPath(){
         return std::filesystem::current_path() / "Assets";
     }
 
-    std::filesystem::path FileSystem::GetSafeSavePath(){
-        std::filesystem::path saveDir;
+    //TODO: We should also provide another safe path that is in the project folder aka currentDir/Saved if the user so chooses
+    // not sure how to name it
+    EFPath FileSystem::GetSafePath(){
+        EFPath safeDir;
         EFChar* path;
         size_t pathSize;
-        // TODO: Platformspicifc code here, should probably be moved or defined by PlatformAbstraction
+        // TODO: Platform-specific code here, should probably be moved or defined by PlatformAbstraction
 #ifdef _WIN32
         if (::_dupenv_s(&path, &pathSize, "APPDATA")){
-            saveDir = path;
+            safeDir = path;
         }
         else{
-            saveDir = std::filesystem::temp_directory_path();
+            safeDir = std::filesystem::temp_directory_path();
         }
 #else
         if(::_dupenv_s(&path, &pathSize, "HOME")){
@@ -31,31 +33,31 @@ namespace EventfulEngine{
         }
 #endif
         // TODO: Resolve name of this folder to mirror CompanyName/ProjectName once those settings exist
-        saveDir /= "EventfulSaves";
-        if (!DirectoryExists(saveDir)){
-            std::filesystem::create_directories(saveDir);
+        safeDir /= "EvenfulEngine/EventfulProject";
+        if (!DirectoryExists(safeDir)){
+            std::filesystem::create_directories(safeDir);
         }
-        return saveDir;
+        return safeDir;
     }
 
-    bool FileSystem::FileExists(const std::filesystem::path& p){
+    bool FileSystem::FileExists(const EFPath& p){
         return std::filesystem::exists(p) && !std::filesystem::is_directory(p);
     }
 
-    bool FileSystem::DirectoryExists(const std::filesystem::path& p){
+    bool FileSystem::DirectoryExists(const EFPath& p){
         return std::filesystem::exists(p) && std::filesystem::is_directory(p);
     }
 
-    bool FileSystem::CreateDirectory(const std::filesystem::path& p){
+    bool FileSystem::CreateDirectory(const EFPath& p){
         return std::filesystem::create_directories(p);
     }
 
-    bool FileSystem::Remove(const std::filesystem::path& p){
+    bool FileSystem::Remove(const EFPath& p){
         return std::filesystem::remove_all(p) > 0;
     }
 
-    std::vector<std::filesystem::path> FileSystem::EnumerateFiles(const std::filesystem::path& dir){
-        std::vector<std::filesystem::path> files;
+    std::vector<std::filesystem::path> FileSystem::EnumerateFiles(const EFPath& dir){
+        std::vector<EFPath> files;
         if (!DirectoryExists(dir))
             return files;
 

@@ -5,6 +5,7 @@
 #include "EFCoreModuleAPI.h"
 
 namespace EventfulEngine{
+    typedef std::filesystem::path EFPath;
     /**
      * Simple registry storing asset identifiers and their paths. This is only a
      * placeholder that will be expanded once the asset system is implemented.
@@ -12,7 +13,7 @@ namespace EventfulEngine{
     struct EFCORE_API AssetRegistry{
         //TODO: Store by GUID instead of string for cheaper more reliable lookup
         //TODO: Add helpers to find GUID by name/path
-        std::unordered_map<std::string, std::filesystem::path> assets;
+        std::unordered_map<std::string, EFPath> assets;
     };
 
     /**
@@ -23,21 +24,21 @@ namespace EventfulEngine{
     class EFCORE_API FileSystem{
     public:
         /** Path where engine assets reside. */
-        static std::filesystem::path GetAssetsPath();
+        static EFPath GetAssetsPath();
 
         /** Platform agnostic writable directory (created if missing). */
-        static std::filesystem::path GetSafeSavePath();
+        static EFPath GetSafePath();
 
-        static bool FileExists(const std::filesystem::path& p);
+        static bool FileExists(const EFPath& p);
 
-        static bool DirectoryExists(const std::filesystem::path& p);
+        static bool DirectoryExists(const EFPath& p);
 
-        static bool CreateDirectory(const std::filesystem::path& p);
+        static bool CreateDirectory(const EFPath& p);
 
-        static bool Remove(const std::filesystem::path& p);
+        static bool Remove(const EFPath& p);
 
-        static std::vector<std::filesystem::path>
-        EnumerateFiles(const std::filesystem::path& dir);
+        static std::vector<EFPath>
+        EnumerateFiles(const EFPath& dir);
     };
 
 } // EventfulEngine

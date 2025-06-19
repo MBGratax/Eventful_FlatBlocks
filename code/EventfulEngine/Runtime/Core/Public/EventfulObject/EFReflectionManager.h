@@ -12,7 +12,7 @@ namespace EventfulEngine{
 
     class EFReflectionManager : public IManager<EFReflectionManager>{
     public:
-        EFClassPtr RegisterClass(std::string_view name, std::size_t hash, std::size_t parentHash);
+        EFClassPtr RegisterClass(const EFClassPtr& cls);
 
         void RegisterProperty(std::size_t classHash, const EFProperty& property);
 

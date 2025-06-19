@@ -9,6 +9,10 @@
     {
       "Dependency Type": "PUBLIC",
       "Library Name": "spdlog::spdlog"
+    },
+    {
+      "Dependency Type": "PUBLIC",
+      "Library Name": "nlohmann_json::nlohmann_json"
     }
   ]
 }

@@ -8,6 +8,7 @@
 #include <algorithm>
 
 namespace EventfulEngine{
+    class JsonArchive;
     /*!
      * @brief A base object class for all managed objects in Eventful.
      */
@@ -21,8 +22,8 @@ namespace EventfulEngine{
 
         inline static EFString _name{"EFObject"};
 
-        static constexpr auto _efClassFlags = E_ClassFlags::None;
-        static inline EFMetaDataList _efClassMetadata = EFMetaDataList{{"Category", {"Object"}}};
+        static inline auto _efClassFlags = E_ClassFlags::None;
+        static inline auto _efClassMetadata = EFMetaDataList{{"Category", {"Object"}}};
         virtual const std::string& GetClassName() const{ return _name; }
 
         virtual bool IsClass(const std::string& name) const{
@@ -30,7 +31,7 @@ namespace EventfulEngine{
             return false;
         }
 
-        friend bool __ReflectedClass_EFObject();
+        friend bool _ReflectedClass_EFObject();
 
         EFObject() = default;
 
@@ -98,15 +99,9 @@ namespace EventfulEngine{
         }
 
         // Serialization & GC callbacks -------------------------------------
-        virtual void Serialize(){
-            //stub
-            _bIsValid = true;
-        }
+        virtual void Serialize(JsonArchive& ar) const;
 
-        virtual void OnGC(){
-            //stub
-            _bIsValid = false;
-        }
+        virtual void Deserialize(const JsonArchive& ar);
 
     protected:
         bool _bIsValid{true};
