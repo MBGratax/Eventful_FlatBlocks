@@ -5,6 +5,8 @@
 
 namespace EventfulEngine{
 
+    EFCORE_API EF_DECLARE_LOG_CATEGORY_EXTERN(CoreLog)
+
     struct GameEditorOverrides{
         /** Check if we are PIE or embedded in a window */
         bool bIsEmbedded = false;

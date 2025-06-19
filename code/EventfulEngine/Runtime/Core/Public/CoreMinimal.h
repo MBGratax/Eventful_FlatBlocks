@@ -13,3 +13,4 @@
 #include "EnumFlag.h"
 #include "EFClass.h"
 #include "EFLogger.h"
+#include "Delegates.h"
