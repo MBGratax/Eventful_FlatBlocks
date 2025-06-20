@@ -12,7 +12,7 @@ namespace EventfulEngine{
 
     class EFReflectionManager : public IManager<EFReflectionManager>{
     public:
-        EFClassPtr RegisterClass(const EFClassPtr& cls);
+        EFClassPtr RegisterClass(EFClassPtr& cls);
 
         void RegisterProperty(std::size_t classHash, const EFProperty& property);
 
@@ -21,6 +21,8 @@ namespace EventfulEngine{
         EFClassPtr GetClass(std::size_t hash) const;
 
         EFClassPtr GetClass(std::string_view name) const;
+
+        EFClassPtr GetClass(std::type_index type) const;
 
     private:
         std::unordered_map<std::size_t, EFClassPtr> _classes;

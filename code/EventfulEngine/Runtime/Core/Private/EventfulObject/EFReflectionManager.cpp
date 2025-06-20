@@ -6,7 +6,7 @@
 #include <ranges>
 
 namespace EventfulEngine{
-    EFClassPtr EFReflectionManager::RegisterClass(const EFClassPtr& cls){
+    EFClassPtr EFReflectionManager::RegisterClass(EFClassPtr& cls){
         _classes.insert_or_assign(cls->Hash, std::move(cls));
         return _classes[cls->Hash];
     }
@@ -37,7 +37,16 @@ namespace EventfulEngine{
     EFClassPtr EFReflectionManager::GetClass(const std::string_view name) const{
         for (auto& efClassPtr : _classes | std::views::values){
             if (efClassPtr->Name == name){
-                return std::cref(efClassPtr);
+                return efClassPtr;
+            }
+        }
+        return nullptr;
+    }
+
+    EFClassPtr EFReflectionManager::GetClass(const std::type_index type) const{
+        for (auto& efClassPtr : _classes | std::views::values){
+            if (efClassPtr->ClassType == type){
+                return efClassPtr;
             }
         }
         return nullptr;
