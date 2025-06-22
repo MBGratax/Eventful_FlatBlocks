@@ -267,7 +267,8 @@ friend bool _ReflectedClass_##ClassName();
         efClassPtr->Flags = registeringClass::_efClassFlags;\
         efClassPtr->MetaData = registeringClass::_efClassMetadata;\
         registeringClass::_efClass = EFReflectionManager::Get().RegisterClass(efClassPtr);\
-    }
+    }\
+RegisterJsonType<ClassName>();
 
 #define EFPROPERTY(Property, Flags, ...)\
 using MemberPointer = decltype(&registeringClass::Property);\
@@ -284,7 +285,8 @@ auto efAutoProperty = std::make_unique<AutoPropertyT>(memberData);\
                           Flags,\
                           EFMetaDataList{__VA_ARGS__}\
                       }\
-    );
+    );\
+RegisterJsonType<AutoPropertyT::MemberType>();
 
 #define EFMETHOD(Method, Flags, ...) \
     using MethodPointer = decltype(&registeringClass::Method);\

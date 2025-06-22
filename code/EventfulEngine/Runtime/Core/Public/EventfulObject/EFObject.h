@@ -46,10 +46,11 @@ namespace EventfulEngine{
         void operator delete(void* ptr){ EFMemory::Free(ptr); }
 
         template <typename T, typename... Args>
-        static EFSharedPtr<T> Create(EFObject const* owner, const EFString& name, Args&&... args){
+        static EFSharedPtr<T> Create(EFObject const* owner, const EFString& name, const int GUID, Args&&... args){
             auto obj = MakeShared<T>(std::forward<Args>(args)...);
             obj->_owner = owner;
             obj->_objectName = name;
+            obj._guid = GUID;
             obj->_bIsValid = true;
             return obj;
         }
@@ -61,6 +62,8 @@ namespace EventfulEngine{
 
         [[nodiscard]] EFObject* GetOwner() const{ return _owner; }
         void SetOuter(EFObject* outer){ _owner = outer; }
+
+        int GetGUID() const{ return _guid; }
 
         [[nodiscard]] const EFString& GetName() const{ return _objectName; }
         void Rename(const std::string_view newName){ _objectName = newName; }
@@ -107,6 +110,8 @@ namespace EventfulEngine{
         bool _bIsValid{true};
         EFObject* _owner{nullptr};
         std::string _objectName;
+        // TODO: Make actual GUID
+        int _guid{0};
         std::vector<std::string> _tags;
     };
 }

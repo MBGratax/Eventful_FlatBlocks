@@ -41,29 +41,7 @@ namespace EventfulEngine{
         return g_Readers;
     }
 
-    template <typename T>
-    static void RegisterJsonType(){
-        auto& g_Writers = G_Writers();
-        auto& g_Readers = G_Readers();
-        g_Writers[typeid(T)] =
-            [](const EFObject* instance,
-               JsonArchive& ar,
-               const EFProperty& prop){
-                std::any raw = prop.AutoProperty->Get(instance);
-                T val = std::any_cast<T>(std::move(raw));
-                ar.Set(prop.Name, val);
-            };
-
-        g_Readers[typeid(T)] =
-            [](EFObject* instance,
-               const JsonArchive& ar,
-               const EFProperty& prop){
-                if (T val; ar.Get(prop.Name, val)){
-                    prop.AutoProperty->Set(instance, std::any(std::move(val)));
-                }
-            };
-    }
-
+    //TODO: Refactor this whole jsontype registration to per-file JsonArchive& operator<<(JsonArchive& Ar, T& value)
     void InitJsonLoaders(){
         RegisterJsonType<bool>();
 
