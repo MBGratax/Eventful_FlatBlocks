@@ -24,9 +24,9 @@ namespace EventfulEngine{
 
         static inline auto _efClassFlags = E_ClassFlags::None;
         static inline auto _efClassMetadata = EFMetaDataList{{"Category", {"Object"}}};
-        virtual const std::string& GetClassName() const{ return _name; }
+        virtual const EFString& GetClassName() const{ return _name; }
 
-        virtual bool IsClass(const std::string& name) const{
+        virtual bool IsClass(const EFString& name) const{
             if (EFReflectionManager::Get().GetClass(name) != nullptr){ return true; }
             return false;
         }
@@ -82,13 +82,13 @@ namespace EventfulEngine{
             return std::ranges::find(_tags, tag) != _tags.end();
         }
 
-        void RemoveTag(const std::string& tag){
+        void RemoveTag(const EFString& tag){
             if (const auto it = std::ranges::remove(_tags, tag).begin(); it != _tags.end())
                 _tags.erase(
                     it, _tags.end());
         }
 
-        [[nodiscard]] const std::vector<std::string>& GetTags() const{ return _tags; }
+        [[nodiscard]] const std::vector<EFString>& GetTags() const{ return _tags; }
 
         // Duplication Hooks -------------------------------------------------
         virtual void PreDuplicate(const EFObject& source){
@@ -109,9 +109,9 @@ namespace EventfulEngine{
     protected:
         bool _bIsValid{true};
         EFObject* _owner{nullptr};
-        std::string _objectName;
+        EFString _objectName;
         // TODO: Make actual GUID
         int _guid{0};
-        std::vector<std::string> _tags;
+        std::vector<EFString> _tags;
     };
 }

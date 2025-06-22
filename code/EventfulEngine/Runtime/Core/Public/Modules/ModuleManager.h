@@ -4,12 +4,14 @@
 #include <CoreTypes.h>
 
 #include "IManager.h"
-#include "IModule.h"
+#include <string_view>
 #include "ModuleLoadPhase.h"
 #include "PlatformMisc.h"
 #include <unordered_map>
-#include <string>
 
+class IModule;
+
+//TODO: Move this to platform code
 #if defined(_WIN32)
 #   define EF_MODULE_EXPORT __declspec(dllexport)
 #else
@@ -23,7 +25,7 @@ namespace EventfulEngine{
         using ModuleFactory = IModule*(*)();
 
         /** Register a statically linked module instance. */
-        void RegisterStaticModule(const std::string& name,
+        void RegisterStaticModule(const EFString& name,
                                   E_ModuleLoadPhase phase,
                                   IModule* instance);
 
@@ -33,31 +35,31 @@ namespace EventfulEngine{
                                    const std::string_view& libraryPath);
 
         /** Load a single module by name. */
-        bool LoadModule(const std::string& name);
+        bool LoadModule(const EFString& name);
 
         /** Load all modules registered for a given phase. */
         bool LoadModules(E_ModuleLoadPhase phase);
 
         /** Unload a single module by name. */
-        bool UnloadModule(const std::string& name);
+        bool UnloadModule(const EFString& name);
 
         /** Unload all modules for a given phase. */
         bool UnloadModules(E_ModuleLoadPhase phase);
 
         /** Reload a single module including dependent phases. */
-        bool ReloadModule(const std::string& name);
+        bool ReloadModule(const EFString& name);
 
         /** Retrieve a module instance if loaded. */
-        IModule* GetModule(const std::string& name);
+        IModule* GetModule(const EFString& name);
 
         /** Retrieve a module instance cast to a specific type. */
         template <typename T>
-        T* GetModuleAs(const std::string& name){
+        T* GetModuleAs(const EFString& name){
             return dynamic_cast<T*>(GetModule(name));
         }
 
         /** Check if a module with the given name has been registered. */
-        [[nodiscard]] bool IsModuleRegistered(const std::string& name) const;
+        [[nodiscard]] bool IsModuleRegistered(const EFString& name) const;
 
         /** Shutdown and unload all modules. */
         void Shutdown();

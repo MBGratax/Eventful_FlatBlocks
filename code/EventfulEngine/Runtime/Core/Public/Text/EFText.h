@@ -38,7 +38,7 @@ namespace EventfulEngine{
         }
 
         /** Return the escape code for a color. */
-        static std::string ColorCode(EFTextColor color);
+        static EFString ColorCode(EFTextColor color);
 
         /** Wrap the provided text in the given color escape codes. */
         static EFString ApplyColor(std::string_view text, EFTextColor color);
@@ -56,6 +56,6 @@ namespace EventfulEngine{
         static void ClearMacros();
 
     private:
-        static std::unordered_map<std::string, std::string> _macroTable;
+        static std::unordered_map<EFString, EFString> _macroTable;
     };
 }

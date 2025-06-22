@@ -33,8 +33,8 @@ namespace EventfulEngine{
     MAKEFLAG(E_MethodFlags);
 
     struct EFMetaData{
-        std::string KeyName;
-        std::vector<std::string> ValueName;
+        EFString KeyName;
+        std::vector<EFString> ValueName;
     };
 
     using EFMetaDataList = std::vector<EFMetaData>;
@@ -102,8 +102,8 @@ namespace EventfulEngine{
     };
 
     struct EFProperty{
-        std::string Name;
-        std::shared_ptr<EFAutoProperty> AutoProperty;
+        EFString Name;
+        EFSharedPtr<EFAutoProperty> AutoProperty;
         std::type_index Type{typeid(void)};
         E_PropertyFlags Flags{E_PropertyFlags::None};
         EFMetaDataList MetaData;
@@ -204,14 +204,14 @@ namespace EventfulEngine{
     };
 
     struct EFMethod{
-        std::string Name;
-        std::unique_ptr<EFCallable> Callable;
+        EFString Name;
+        EFUniquePtr<EFCallable> Callable;
         E_MethodFlags Flags{E_MethodFlags::None};
         EFMetaDataList MetaData;
     };
 
     struct EFClass{
-        std::string Name;
+        EFString Name;
         std::size_t Hash{0};
         std::size_t ParentHash{0};
         std::type_index ClassType{typeid(void)};
@@ -227,11 +227,11 @@ namespace EventfulEngine{
     using _superClass = ParentClassName;\
     static EFClassPtr _efClass;\
     static const EFClass& StaticClass(){ return _efClass; }\
-    inline static std::string _name{#ClassName};\
+    inline static EFString _name{#ClassName};\
     static constexpr auto _efClassFlags = Flags;\
     static inline EFMetaDataList _efClassMetadata = {__VA_ARGS__};\
-    virtual const std::string& GetClassName() const{ return _name; }\
-    virtual bool IsClass(const std::string& name) const{\
+    virtual const EFString& GetClassName() const{ return _name; }\
+    virtual bool IsClass(const EFString& name) const{\
         if (EFReflectionManager::Get().GetClass(name) != nullptr){ return true; }\
         return IsClass(_superClass::_name);\
     }\
@@ -274,7 +274,7 @@ RegisterJsonType<ClassName>();
 using MemberPointer = decltype(&registeringClass::Property);\
 using AutoPropertyT = EFAutoPropertyImp<MemberPointer>;\
 auto memberData = MakeMemberData(&registeringClass::Property);\
-auto efAutoProperty = std::make_unique<AutoPropertyT>(memberData);\
+auto efAutoProperty = MakeUnique<AutoPropertyT>(memberData);\
 \
     EFReflectionManager::Get()\
     .RegisterProperty(clsHash,\
@@ -292,7 +292,7 @@ RegisterJsonType<AutoPropertyT::MemberType>();
     using MethodPointer = decltype(&registeringClass::Method);\
     using CallableT = EFCallableMethod<MethodPointer>;\
     auto methodData = make_method_data(&registeringClass::Method);\
-    auto efCallable = std::make_unique<CallableT>(methodData);\
+    auto efCallable = MakeUnique<CallableT>(methodData);\
 \
     EFReflectionManager::Get()\
     .RegisterMethod(clsHash,\

@@ -1,6 +1,9 @@
 #pragma once
 
 #include "ModuleManager.h"
+#include "IModule.h"
+#include "CoreGlobals.h"
+#include "EFText.h"
 
 #include <array>
 #include <ranges>
@@ -17,7 +20,7 @@ namespace EventfulEngine{
             GameSession
         };
 
-    void ModuleManager::RegisterStaticModule(const std::string& name, const E_ModuleLoadPhase phase, IModule* instance){
+    void ModuleManager::RegisterStaticModule(const EFString& name, const E_ModuleLoadPhase phase, IModule* instance){
         ModuleEntry entry{};
         entry.Phase = phase;
         entry.bIsDynamic = false;
@@ -34,7 +37,7 @@ namespace EventfulEngine{
         _modules.insert_or_assign(name, std::move(entry));
     }
 
-    bool ModuleManager::LoadModule(const std::string& name){
+    bool ModuleManager::LoadModule(const EFString& name){
         const auto efModule = _modules.find(name);
         if (efModule == _modules.end()){
             return false;
@@ -48,6 +51,7 @@ namespace EventfulEngine{
         if (entry.bIsDynamic){
             entry.Handle = EFLibraryUtilities::LoadDynamicLibrary(entry.Library);
             if (!entry.Handle){
+                EF_LOG(CoreLog, err, EFText::Format("Failed to load module '{}'", name));
                 return false;
             }
 
@@ -57,6 +61,7 @@ namespace EventfulEngine{
             if (!entry.Factory){
                 EFLibraryUtilities::UnloadDynamicLibrary(entry.Handle);
                 entry.Handle = nullptr;
+                EF_LOG(CoreLog, err, EFText::Format("Failed to find module factory for '{}'!", name));
                 return false;
             }
 
@@ -66,6 +71,7 @@ namespace EventfulEngine{
         if (entry.Instance){
             entry.Instance->StartupModule();
             entry.bIsLoaded = true;
+            EF_LOG(CoreLog, info, EFText::Format("Loaded Module '{}'", name));
             return true;
         }
 
@@ -105,10 +111,11 @@ namespace EventfulEngine{
         }
 
         entry.bIsLoaded = false;
+        EF_LOG(CoreLog, info, EFText::Format("Unloaded module '{}'", name));
         return true;
     }
 
-    bool ModuleManager::UnloadModules(E_ModuleLoadPhase phase){
+    bool ModuleManager::UnloadModules(const E_ModuleLoadPhase phase){
         bool success = true;
         for (const auto& [name, entry] : _modules){
             if (entry.Phase == phase){
@@ -118,7 +125,7 @@ namespace EventfulEngine{
         return success;
     }
 
-    bool ModuleManager::ReloadModule(const std::string& name){
+    bool ModuleManager::ReloadModule(const EFString& name){
         const auto efModule = _modules.find(name);
         if (efModule == _modules.end()){
             return false;
@@ -142,14 +149,14 @@ namespace EventfulEngine{
         return true;
     }
 
-    IModule* ModuleManager::GetModule(const std::string& name){
+    IModule* ModuleManager::GetModule(const EFString& name){
         if (const auto efModule = _modules.find(name); efModule != _modules.end()){
             return efModule->second.Instance;
         }
         return nullptr;
     }
 
-    bool ModuleManager::IsModuleRegistered(const std::string& name) const{
+    bool ModuleManager::IsModuleRegistered(const EFString& name) const{
         return _modules.contains(name);
     }
 

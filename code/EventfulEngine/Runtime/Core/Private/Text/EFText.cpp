@@ -3,9 +3,9 @@
 #include "EFText.h"
 
 namespace EventfulEngine{
-    std::unordered_map<std::string, std::string> EFText::_macroTable{};
+    std::unordered_map<EFString, EFString> EFText::_macroTable{};
 
-    std::string EFText::ColorCode(const EFTextColor color){
+    EFString EFText::ColorCode(const EFTextColor color){
         switch (color){
             using enum EFTextColor;
         case Black: return "\033[30m";
@@ -29,15 +29,15 @@ namespace EventfulEngine{
     }
 
     EFString EFText::ApplyColor(const std::string_view text, const EFTextColor color){
-        return ColorCode(color) + std::string(text) + ColorCode(EFTextColor::TextColor);
+        return ColorCode(color) + EFString(text) + ColorCode(EFTextColor::TextColor);
     }
 
     void EFText::RegisterMacro(const std::string_view name, const std::string_view value){
-        _macroTable[std::string(name)] = std::string(value);
+        _macroTable[EFString(name)] = EFString(value);
     }
 
     EFString EFText::GetMacro(const std::string_view name){
-        if (const auto macro = _macroTable.find(std::string(name)); macro != _macroTable.end()){
+        if (const auto macro = _macroTable.find(EFString(name)); macro != _macroTable.end()){
             return macro->second;
         }
         return {};
