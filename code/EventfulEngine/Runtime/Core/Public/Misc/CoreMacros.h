@@ -3,14 +3,16 @@
 // TODO: Keep updated with useful macros
 
 #define NOMOVE(ClassName)                           \
-ClassName& operator=(ClassName&& other) = delete;
+    ClassName(ClassName&&)        noexcept = delete;\
+    ClassName& operator=(ClassName&&) noexcept = delete;
 
 #define NOCOPY(ClassName)                           \
-ClassName& operator=(ClassName& other) = delete;
+    ClassName(const ClassName&)            = delete;\
+    ClassName& operator=(const ClassName&) = delete;
 
 #define NOMOVEORCOPY(ClassName)                           \
-ClassName& operator=(ClassName&& other) = delete;         \
-ClassName& operator=(ClassName& other) = delete;
+    NOCOPY(ClassName)                                     \
+    NOMOVE(ClassName)
 
 // TODO: Make global via cmake
 #define EVENTFUL_PLATFORM Windows
