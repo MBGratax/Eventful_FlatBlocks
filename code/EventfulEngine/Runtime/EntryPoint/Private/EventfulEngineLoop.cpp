@@ -7,6 +7,7 @@
 namespace EventfulEngine{
     int32 EventfulEngineLoop::PreInitProcessCLI(
     ){
+        // TODO: Encapsulate default CLI options in a free function somewhere else
         g_commandLine.AddOption<bool>("v,verbose", "Enable verbose logging",
                                       "Use -v or -verbose to enable verbose logging", "false");
         g_commandLine.Parse();

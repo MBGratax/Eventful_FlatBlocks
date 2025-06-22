@@ -12,7 +12,7 @@ namespace EventfulEngine{
 		// TODO: Add Global Profiler marker start
 		EF_LOG(CoreLog, info, "Starting up EventfulEngine on Windows!");
 		int32 ErrorLevel = 0;
-		// TODO: Once we need a windows handle, make it global here
+		// TODO: Once we need a windows handle, assign global ref here
 		//g_hInstance = hInInstance;
 
 		g_commandLine.Init(__argc, __argv);
