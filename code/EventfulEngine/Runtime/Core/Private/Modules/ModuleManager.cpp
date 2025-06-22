@@ -51,7 +51,7 @@ namespace EventfulEngine{
         if (entry.bIsDynamic){
             entry.Handle = EFLibraryUtilities::LoadDynamicLibrary(entry.Library);
             if (!entry.Handle){
-                EF_LOG(CoreLog, err, EFText::Format("Failed to load module '{}'", name));
+                EF_LOG(CoreLog, err, EFText::Format("Failed to load module '{}'", entry.Library));
                 return false;
             }
 
@@ -61,7 +61,7 @@ namespace EventfulEngine{
             if (!entry.Factory){
                 EFLibraryUtilities::UnloadDynamicLibrary(entry.Handle);
                 entry.Handle = nullptr;
-                EF_LOG(CoreLog, err, EFText::Format("Failed to find module factory for '{}'!", name));
+                EF_LOG(CoreLog, err, EFText::Format("Failed to find module factory for '{}'!", entry.Library));
                 return false;
             }
 
@@ -71,7 +71,7 @@ namespace EventfulEngine{
         if (entry.Instance){
             entry.Instance->StartupModule();
             entry.bIsLoaded = true;
-            EF_LOG(CoreLog, info, EFText::Format("Loaded Module '{}'", name));
+            EF_LOG(CoreLog, info, EFText::Format("Loaded Module '{}'", entry.Library));
             return true;
         }
 
@@ -89,7 +89,7 @@ namespace EventfulEngine{
     }
 
     bool ModuleManager::UnloadModule(const std::string& name){
-        auto efModule = _modules.find(name);
+        const auto efModule = _modules.find(name);
         if (efModule == _modules.end())
             return false;
 
@@ -111,7 +111,7 @@ namespace EventfulEngine{
         }
 
         entry.bIsLoaded = false;
-        EF_LOG(CoreLog, info, EFText::Format("Unloaded module '{}'", name));
+        EF_LOG(CoreLog, info, EFText::Format("Unloaded module '{}'", entry.Library));
         return true;
     }
 

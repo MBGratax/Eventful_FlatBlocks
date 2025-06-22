@@ -9,7 +9,6 @@
 #include "PlatformMisc.h"
 #include <unordered_map>
 
-class IModule;
 
 //TODO: Move this to platform code
 #if defined(_WIN32)
@@ -19,6 +18,7 @@ class IModule;
 #endif
 
 namespace EventfulEngine{
+    class IModule;
 
     class ModuleManager : public IManager<ModuleManager>{
     public:

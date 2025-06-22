@@ -103,7 +103,7 @@ namespace EventfulEngine{
 
     struct EFProperty{
         EFString Name;
-        EFSharedPtr<EFAutoProperty> AutoProperty;
+        std::shared_ptr<EFAutoProperty> AutoProperty;
         std::type_index Type{typeid(void)};
         E_PropertyFlags Flags{E_PropertyFlags::None};
         EFMetaDataList MetaData;
@@ -205,7 +205,7 @@ namespace EventfulEngine{
 
     struct EFMethod{
         EFString Name;
-        EFUniquePtr<EFCallable> Callable;
+        std::unique_ptr<EFCallable> Callable;
         E_MethodFlags Flags{E_MethodFlags::None};
         EFMetaDataList MetaData;
     };

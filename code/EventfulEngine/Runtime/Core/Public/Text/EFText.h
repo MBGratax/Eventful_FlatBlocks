@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreTypes.h"
+#include "EFCoreModuleAPI.h"
 
 #include <format>
 #include <string_view>
@@ -33,8 +34,13 @@ namespace EventfulEngine{
 
         /** Format a string using std::format semantics. */
         template <typename... Args>
-        static EFString Format(std::string_view fmt, Args&&... args){
+        static EFString Format(const std::string_view fmt, Args&&... args){
             return std::vformat(fmt, std::make_format_args(std::forward<Args>(args)...));
+        }
+
+        template <typename... Args>
+        static const char* Format(const char* fmt, Args&&... args){
+            return std::vformat(fmt, std::make_format_args(std::forward<Args>(args)...)).c_str();
         }
 
         /** Return the escape code for a color. */
