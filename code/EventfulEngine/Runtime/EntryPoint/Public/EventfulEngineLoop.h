@@ -28,19 +28,15 @@ namespace EventfulEngine{
 
 		/*!
 	 * @brief The Pre-initialization of the main loop. Generates a commandline from the main() arguments.
-	 * @param ArgC The number of strings in ArgV.
-	 * @param ArgV The command line parameters where the first element (ArgV[0]) is expected to be the name of the executable.
-	 * @param AdditionalCommandline An optional string to append to the cli after processing ArgV.
 	 * @return Returns the error level as usual, 0 is success, and >0 means there were errors.
 	 */
-		int32 PreInitProcessCLI(int32 ArgC, const EFString ArgV[], const EFString* AdditionalCommandline = nullptr);
+		int32 PreInitProcessCLI();
 
 		/*!
 	 * @brief Runs the actual Preinitialization steps.
-	 * @param CmdLine The previously generated commandline.
 	 * @return Returns the error level as usual, 0 is success, and >0 means there were errors.
 	 */
-		int32 BeforeEngineInit(const EFString& CmdLine);
+		int32 BeforeEngineInit();
 
 		/** First part of PreInit. */
 		int32 PreInitPreStartupScreen(const EFString& CmdLine);
@@ -49,7 +45,7 @@ namespace EventfulEngine{
 		int32 PreInitPostStartupScreen(const EFString& CmdLine);
 
 		/** Load all modules needed before Init. */
-		void LoadPreInitModules();
+		bool LoadPreInitModules();
 
 		/** Load core modules. */
 		bool LoadCoreModules();
@@ -93,7 +89,7 @@ namespace EventfulEngine{
 #endif // WITH_ENGINE
 
 		/** RHI post-init initialization */
-		static void PostInitRHI();
+		static void PostInitGraphicsAPI();
 
 		/** Initializes the application. */
 		static bool AppInit();

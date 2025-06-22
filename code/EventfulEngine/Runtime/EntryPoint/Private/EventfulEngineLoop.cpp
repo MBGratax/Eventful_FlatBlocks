@@ -2,32 +2,23 @@
 
 #include "../Public/EventfulEngineLoop.h"
 
+#include <CoreGlobals.h>
+
 namespace EventfulEngine{
-    int32 EventfulEngineLoop::PreInitProcessCLI(int32 ArgC, const EFString ArgV[],
-                                                const EFString* AdditionalCommandline){
-        EFString cmdLine;
-        for (int32 i = 0; i < ArgC; ++i){
-            cmdLine += ArgV[i];
-            if (i + 1 < ArgC){
-                cmdLine += ' ';
-            }
-        }
-        if (AdditionalCommandline != nullptr){
-            if (!cmdLine.empty()){
-                cmdLine += ' ';
-            }
-            cmdLine += *AdditionalCommandline;
-        }
-        return BeforeEngineInit(cmdLine);
+    int32 EventfulEngineLoop::PreInitProcessCLI(
+    ){
+        g_commandLine.AddOption<bool>("v,verbose", "Enable verbose logging",
+                                      "Use -v or -verbose to enable verbose logging", "false");
+        g_commandLine.Parse();
+        return BeforeEngineInit();
     }
 
-    int32 EventfulEngineLoop::BeforeEngineInit(const EFString& CmdLine){
-        int32 error = PreInitPreStartupScreen(CmdLine);
-        if (error != 0){
-            return error;
-        }
-        error = PreInitPostStartupScreen(CmdLine);
-        return error;
+    int32 EventfulEngineLoop::BeforeEngineInit(){
+        bool success = true;
+        success &= LoadPreInitModules();
+        // TODO: after doing preinit modules, grab cli options we need
+        success &= LoadCoreModules();
+        return success ? 0 : 1;
     }
 
     int32 EventfulEngineLoop::PreInitPreStartupScreen(const EFString& CmdLine){
@@ -42,8 +33,9 @@ namespace EventfulEngine{
         return success ? 0 : 1;
     }
 
-    void EventfulEngineLoop::LoadPreInitModules(){
+    bool EventfulEngineLoop::LoadPreInitModules(){
         // stub for loading pre-initialization modules
+        return true;
     }
 
     bool EventfulEngineLoop::LoadCoreModules(){
@@ -103,7 +95,7 @@ namespace EventfulEngine{
     }
 #endif // WITH_ENGINE
 
-    void EventfulEngineLoop::PostInitRHI(){
+    void EventfulEngineLoop::PostInitGraphicsAPI(){
         // stub for post RHI initialization
     }
 

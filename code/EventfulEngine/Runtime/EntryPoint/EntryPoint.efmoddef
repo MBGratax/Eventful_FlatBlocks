@@ -7,7 +7,7 @@
   "Defines": [],
   "Dependencies": [
     {
-      "Dependency Type": "PRIVATE",
+      "Dependency Type": "PUBLIC",
       "Library Name": "EFCore"
     },
     {

@@ -1,4 +1,6 @@
 #pragma once
+#include "EFCommandline.h"
+
 #include "CoreMinimal.h"
 
 #include "Exports/EFCoreModuleAPI.h"
@@ -37,4 +39,7 @@ namespace EventfulEngine{
     EFCORE_API void RequestEngineExit();
 
     extern EFCORE_API double g_startTime;
+
+    extern EFCORE_API EFCommandLine g_commandLine;
+
 }

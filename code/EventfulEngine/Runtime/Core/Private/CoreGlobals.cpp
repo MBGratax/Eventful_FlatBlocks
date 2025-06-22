@@ -1,6 +1,7 @@
 #pragma once
 #include "CoreTypes.h"
 #include "../Public/CoreGlobals.h"
+#include "EFCommandLine.h"
 
 namespace EventfulEngine{
 
@@ -22,4 +23,6 @@ namespace EventfulEngine{
     }
 
     double g_startTime = EFPlatformTime::InitTiming();
+
+    EFCommandLine g_commandLine{"EventfulEngine", "General Purpose Voxelizer Engine"};
 }

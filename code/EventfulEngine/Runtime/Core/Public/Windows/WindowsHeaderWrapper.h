@@ -12,5 +12,6 @@
 #endif
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
+#include <shellapi.h>
 
 #undef WINDOWS_H_WRAPPER_GUARD

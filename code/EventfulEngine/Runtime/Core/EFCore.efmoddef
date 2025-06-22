@@ -13,6 +13,10 @@
     {
       "Dependency Type": "PUBLIC",
       "Library Name": "nlohmann_json::nlohmann_json"
+    },
+    {
+      "Dependency Type": "PUBLIC",
+      "Library Name": "cxxopts::cxxopts"
     }
   ]
 }

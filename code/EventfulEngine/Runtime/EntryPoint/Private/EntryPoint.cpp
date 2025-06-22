@@ -18,7 +18,7 @@ namespace EventfulEngine{
 	 * PreInits the engine loop
 	 */
 	int32 BeforeEngineInit(const EFString& CmdLine){
-		const int32 errorLevel = g_engineLoop.BeforeEngineInit(CmdLine);
+		const int32 errorLevel = g_engineLoop.BeforeEngineInit();
 
 		return errorLevel;
 	}
@@ -50,11 +50,13 @@ namespace EventfulEngine{
 	 * @brief Generic main entry point that is invoked by the platform-specific entry point after setting up platform boilerplate
 	 * @return The usual 0 for success and >0 for error int
 	 */
-	int32 GenericMain(const EFChar* CmdLine){
+	int32 GenericMain(){
 		// In-method struct that calls engine exit whenever the scope is left
 		struct EngineLoopCleanupGuard{
 
 			NOMOVEORCOPY(EngineLoopCleanupGuard)
+
+			EngineLoopCleanupGuard() = default;
 
 			~EngineLoopCleanupGuard(){
 				EngineExit();
