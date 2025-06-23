@@ -16,6 +16,7 @@ namespace EventfulEngine{
 
         void Shutdown();
 
+        // TODO: Wrap GLFWwindow in a type so we can shared_pointer it
         GLFWwindow* GetNativeHandle() const{ return _window; }
 
     private:

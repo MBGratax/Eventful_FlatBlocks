@@ -5,6 +5,7 @@
 #include "Platform.h"
 #include "GenericPlatformApplication.h"
 // Include platformspecific application here in theory
+
 #include "PlatformAudio.h"
 #include "PlatformWindow.h"
 #include "EFApplicationModuleAPI.h"
@@ -28,9 +29,9 @@ namespace EventfulEngine{
 
         void CloseAudioDevice(EFAudioDevice* device);
 
-        EFString GetClipboardText();
+        static EFString GetClipboardText();
 
-        void SetClipboardText(const EFString& text);
+        static void SetClipboardText(const EFString& text);
 
         float PixelsToDIP(float pixels) const;
 
