@@ -1,2 +1,24 @@
 #pragma once
-//TODO: Use GLFW to create a window per platform without rendering context and handle input
+
+#include "Platform.h"
+#include "GenericPlatformWindow.h"
+
+namespace EventfulEngine{
+    class EFWindow{
+    public:
+        NOCOPY(EFWindow)
+
+        EFWindow() = default;
+
+        ~EFWindow() = default;
+
+        bool Init(int width, int height, const char* title);
+
+        void Shutdown();
+
+        GLFWwindow* GetNativeHandle() const{ return _window; }
+
+    private:
+        GLFWwindow* _window{nullptr};
+    };
+}

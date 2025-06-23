@@ -13,6 +13,10 @@
     {
       "Dependency Type": "PRIVATE",
       "Library Name": "glfw"
+    },
+    {
+      "Dependency Type": "PRIVATE",
+      "Library Name": "OpenAL::OpenAL"
     }
   ]
 }

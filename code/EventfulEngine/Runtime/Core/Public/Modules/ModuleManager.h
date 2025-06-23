@@ -100,6 +100,7 @@ namespace EventfulEngine{
                 EventfulEngine::ModuleManager& Manager = EventfulEngine::ModuleManager::Get(); \
                 if (!Manager.IsModuleRegistered(#ModuleName)) \
                 { \
+    static ModuleImplClass ModuleInstance; \
                     Manager.RegisterStaticModule( \
                         #ModuleName, \
                         ModuleInstance.GetLoadPhase(), \

@@ -7,7 +7,13 @@
     "glfw3",
     "spdlog",
     "glad",
-    "imgui",
+    {
+      "name": "imgui",
+      "default-features": false,
+      "features": [
+        "docking-experimental"
+      ]
+    },
     {
       "name": "joltphysics",
       "default-features": false,
