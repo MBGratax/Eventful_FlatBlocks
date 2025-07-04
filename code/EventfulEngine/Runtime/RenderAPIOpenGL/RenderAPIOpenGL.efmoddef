@@ -13,6 +13,10 @@
     {
       "Dependency Type": "PUBLIC",
       "Library Name": "EFRenderAPI"
+    },
+    {
+      "Dependency Type": "PRIVATE",
+      "Library Name": "glad::glad"
     }
   ]
 }
