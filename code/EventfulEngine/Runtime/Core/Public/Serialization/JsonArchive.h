@@ -37,16 +37,16 @@ namespace EventfulEngine{
     using JsonWriteFunction = std::function<void(const EFObject*, JsonArchive&, const EFProperty&)>;
     using JsonReadFunction = std::function<void(EFObject*, const JsonArchive&, const EFProperty&)>;
 
-    std::unordered_map<std::type_index, JsonWriteFunction>& G_Writers();
+    std::unordered_map<std::type_index, JsonWriteFunction>& GWriters();
 
-    std::unordered_map<std::type_index, JsonReadFunction>& G_Readers();
+    std::unordered_map<std::type_index, JsonReadFunction>& GReaders();
 
     // TODO: Instead of just EFObject, we need to handle this on a per struct/Type basis
     // TODO: This automated version is cool and all, but quickly crumbles once we get to structs or classes
     template <typename T>
     void EFCORE_API RegisterJsonType(){
-        auto& g_Writers = G_Writers();
-        auto& g_Readers = G_Readers();
+        auto& g_Writers = GWriters();
+        auto& g_Readers = GReaders();
         if (g_Writers.contains(typeid(T)) && g_Readers.contains(typeid(T))){
             return;
         }

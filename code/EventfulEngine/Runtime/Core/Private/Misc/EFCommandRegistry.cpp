@@ -3,14 +3,14 @@
 #include "EfCommandRegistry.h"
 
 namespace EventfulEngine{
-    static std::unordered_map<EFString, EFCommandFunction> g_Commands;
+    static std::unordered_map<EFString, EFCommandFunction> g_commands;
 
     void EFCommandRegistry::Register(const EFString& name, EFCommandFunction func){
-        g_Commands[name] = std::move(func);
+        g_commands[name] = std::move(func);
     }
 
     void EFCommandRegistry::Unregister(const EFString& name){
-        g_Commands.erase(name);
+        g_commands.erase(name);
     }
 
     bool EFCommandRegistry::Execute(const EFString& commandLine){
@@ -19,8 +19,8 @@ namespace EventfulEngine{
         if (!(stringStream >> cmd)){
             return false;
         }
-        const auto iterator = g_Commands.find(cmd);
-        if (iterator == g_Commands.end()){
+        const auto iterator = g_commands.find(cmd);
+        if (iterator == g_commands.end()){
             return false;
         }
 

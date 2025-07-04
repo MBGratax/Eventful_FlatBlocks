@@ -14,11 +14,11 @@ namespace EventfulEngine{
 
         static void SetClipboardText(const EFString& text);
 
-        static float PixelsToDIP(float pixels, float scale);
+        static float PixelsToDip(float pixels, float scale);
 
-        static float DIPToPixels(float dips, float scale);
+        static float DipToPixels(float dips, float scale);
 
-        static float GetDPIScale(GLFWmonitor* monitor);
+        static float GetDpiScale(GLFWmonitor* monitor);
     };
 
     using EFPlatformApplication = GenericPlatformApplication;

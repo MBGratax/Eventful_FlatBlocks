@@ -464,6 +464,9 @@ find_package(nlohmann_json CONFIG REQUIRED)
 find_package(Freetype REQUIRED)
 find_package(assimp CONFIG REQUIRED)
 find_path(SPIRVCROSS_INCLUDE_DIRS "spirv_cross/spirv.h")
+find_package(rttr CONFIG REQUIRED)
+find_package(Tracy CONFIG REQUIRED)
+find_package(nfd CONFIG REQUIRED)
 
 # 3) Second Pass:
 foreach (TARGET IN LISTS ALL_MODULE_TARGETS)

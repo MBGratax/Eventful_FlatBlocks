@@ -30,7 +30,7 @@ namespace EventfulEngine{
 	 * @brief The Pre-initialization of the main loop. Generates a commandline from the main() arguments.
 	 * @return Returns the error level as usual, 0 is success, and >0 means there were errors.
 	 */
-		int32 PreInitProcessCLI();
+		int32 PreInitProcessCli();
 
 		/*!
 	 * @brief Runs the actual Preinitialization steps.
@@ -39,10 +39,10 @@ namespace EventfulEngine{
 		int32 BeforeEngineInit();
 
 		/** First part of PreInit. */
-		int32 PreInitPreStartupScreen(const EFString& CmdLine);
+		int32 PreInitPreStartupScreen(const EFString& cmdLine);
 
 		/** Second part of PreInit. */
-		int32 PreInitPostStartupScreen(const EFString& CmdLine);
+		int32 PreInitPostStartupScreen(const EFString& cmdLine);
 
 		/** Load all modules needed before Init. */
 		bool LoadPreInitModules();
@@ -51,8 +51,8 @@ namespace EventfulEngine{
 		bool LoadCoreModules();
 
 		/** Allow override of the project module loaded from project file */
-		void OverrideProjectModule(const EFString& InOriginalProjectModuleName,
-		                           const EFString& InReplacementProjectModuleName);
+		void OverrideProjectModule(const EFString& inOriginalProjectModuleName,
+		                           const EFString& inReplacementProjectModuleName);
 
 		/** Clean up PreInit context. */
 		void CleanupPreInitContext();
@@ -89,7 +89,7 @@ namespace EventfulEngine{
 #endif // WITH_ENGINE
 
 		/** RHI post-init initialization */
-		static void PostInitGraphicsAPI();
+		static void PostInitGraphicsApi();
 
 		/** Initializes the application. */
 		static bool AppInit();

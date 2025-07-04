@@ -35,12 +35,7 @@ namespace EventfulEngine{
         /** Format a string using std::format semantics. */
         template <typename... Args>
         static EFString Format(const std::string_view fmt, Args&&... args){
-            return std::vformat(fmt, std::make_format_args(std::forward<Args>(args)...));
-        }
-
-        template <typename... Args>
-        static const char* Format(const char* fmt, Args&&... args){
-            return std::vformat(fmt, std::make_format_args(std::forward<Args>(args)...)).c_str();
+            return std::vformat(std::locale::classic(), fmt, std::make_format_args(args...));
         }
 
         /** Return the escape code for a color. */

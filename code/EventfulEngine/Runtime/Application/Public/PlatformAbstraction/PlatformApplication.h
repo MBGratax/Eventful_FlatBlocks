@@ -33,9 +33,9 @@ namespace EventfulEngine{
 
         static void SetClipboardText(const EFString& text);
 
-        float PixelsToDIP(float pixels) const;
+        float PixelsToDip(float pixels) const;
 
-        float DIPToPixels(float dips) const;
+        float DipToPixels(float dips) const;
 
         bool IsGamepadConnected(int index) const;
 

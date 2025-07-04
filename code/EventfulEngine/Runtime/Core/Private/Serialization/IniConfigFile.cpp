@@ -2,7 +2,6 @@
 
 #include "IniConfigFile.h"
 #include <fstream>
-#include <sstream>
 
 namespace EventfulEngine{
     bool IniConfigFile::Load(const EFPath& file, IniFile& out){

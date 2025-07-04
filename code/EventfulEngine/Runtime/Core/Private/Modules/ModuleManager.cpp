@@ -10,7 +10,7 @@
 
 namespace EventfulEngine{
     using enum E_ModuleLoadPhase;
-    static constexpr std::array<E_ModuleLoadPhase, 7> PhaseOrder{
+    static constexpr std::array<E_ModuleLoadPhase, 7> PHASE_ORDER{
             PreInit,
             Core,
             Startup,
@@ -51,7 +51,7 @@ namespace EventfulEngine{
         if (entry.bIsDynamic){
             entry.Handle = EFLibraryUtilities::LoadDynamicLibrary(entry.Library);
             if (!entry.Handle){
-                EF_LOG(CoreLog, err, EFText::Format("Failed to load module '{}'", entry.Library));
+                EF_LOG(CoreLog, err, "Failed to load module '{}'", entry.Library);
                 return false;
             }
 
@@ -61,7 +61,7 @@ namespace EventfulEngine{
             if (!entry.Factory){
                 EFLibraryUtilities::UnloadDynamicLibrary(entry.Handle);
                 entry.Handle = nullptr;
-                EF_LOG(CoreLog, err, EFText::Format("Failed to find module factory for '{}'!", entry.Library));
+                EF_LOG(CoreLog, err, "Failed to find module factory for '{}'!", entry.Library);
                 return false;
             }
 
@@ -134,13 +134,13 @@ namespace EventfulEngine{
         const E_ModuleLoadPhase phase = efModule->second.Phase;
 
         // TODO: This should probably be async at some point
-        for (const auto unloadPhase : std::ranges::reverse_view(PhaseOrder)){
+        for (const auto unloadPhase : std::ranges::reverse_view(PHASE_ORDER)){
             if (unloadPhase >= phase){
                 UnloadModules(unloadPhase);
             }
         }
 
-        for (const auto loadPhase : PhaseOrder){
+        for (const auto loadPhase : PHASE_ORDER){
             if (loadPhase >= phase){
                 LoadModules(loadPhase);
             }

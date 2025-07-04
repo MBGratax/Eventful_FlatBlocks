@@ -75,7 +75,7 @@ namespace EventfulEngine{
 
     EFString GenericPlatformTime::DateTimeToString(const SystemClock::time_point timePoint){
         const std::time_t time = SystemClock::to_time_t(timePoint);
-        struct tm* timeStructure = nullptr;
+        tm* timeStructure = nullptr;
         localtime_s(timeStructure, &time);
         std::ostringstream oss;
         oss << std::put_time(timeStructure, "%Y-%m-%d %H:%M:%S");

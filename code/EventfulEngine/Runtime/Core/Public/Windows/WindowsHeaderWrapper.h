@@ -13,5 +13,15 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <shellapi.h>
+#include <shlobj.h>
+
+#ifdef CreateDirectory
+#undef CreateDirectory
+#undef DeleteFile
+#undef MoveFile
+#undef CopyFile
+#undef SetEnvironmentVariable
+#undef GetEnvironmentVariable
+#endif
 
 #undef WINDOWS_H_WRAPPER_GUARD

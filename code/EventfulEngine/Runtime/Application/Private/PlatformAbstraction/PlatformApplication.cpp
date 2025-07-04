@@ -12,7 +12,7 @@ namespace EventfulEngine{
 
     bool EFApplication::Init(){
         if (EFPlatformApplication::Startup()){
-            _dpiScale = EFPlatformApplication::GetDPIScale(::glfwGetPrimaryMonitor());
+            _dpiScale = EFPlatformApplication::GetDpiScale(::glfwGetPrimaryMonitor());
             return true;
         }
         return false;
@@ -76,12 +76,12 @@ namespace EventfulEngine{
         EFPlatformApplication::SetClipboardText(text);
     }
 
-    float EFApplication::PixelsToDIP(const float pixels) const{
-        return EFPlatformApplication::PixelsToDIP(pixels, _dpiScale);
+    float EFApplication::PixelsToDip(const float pixels) const{
+        return EFPlatformApplication::PixelsToDip(pixels, _dpiScale);
     }
 
-    float EFApplication::DIPToPixels(const float dips) const{
-        return EFPlatformApplication::DIPToPixels(dips, _dpiScale);
+    float EFApplication::DipToPixels(const float dips) const{
+        return EFPlatformApplication::DipToPixels(dips, _dpiScale);
     }
 
 
@@ -89,7 +89,7 @@ namespace EventfulEngine{
         return EFPlatformInput::IsGamepadConnected(index);
     }
 
-    bool EFApplication::GetGamepadState(int index, GLFWgamepadstate& state) const{
+    bool EFApplication::GetGamepadState(const int index, GLFWgamepadstate& state) const{
         return EFPlatformInput::GetGamepadState(index, state);
     }
 

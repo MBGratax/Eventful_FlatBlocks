@@ -25,20 +25,20 @@ namespace EventfulEngine{
     }
 
 
-    std::unordered_map<std::type_index, JsonWriteFunction>& G_Writers(){
-        static std::unordered_map<std::type_index, JsonWriteFunction> g_Writers;
-        if (g_Writers.empty()){
+    std::unordered_map<std::type_index, JsonWriteFunction>& GWriters(){
+        static std::unordered_map<std::type_index, JsonWriteFunction> writers;
+        if (writers.empty()){
             InitJsonLoaders();
         }
-        return g_Writers;
+        return writers;
     }
 
-    std::unordered_map<std::type_index, JsonReadFunction>& G_Readers(){
-        static std::unordered_map<std::type_index, JsonReadFunction> g_Readers;
-        if (g_Readers.empty()){
+    std::unordered_map<std::type_index, JsonReadFunction>& GReaders(){
+        static std::unordered_map<std::type_index, JsonReadFunction> readers;
+        if (readers.empty()){
             InitJsonLoaders();
         }
-        return g_Readers;
+        return readers;
     }
 
     //TODO: Refactor this whole jsontype registration to per-file JsonArchive& operator<<(JsonArchive& Ar, T& value)

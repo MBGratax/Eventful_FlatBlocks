@@ -5,7 +5,7 @@
 #include <CoreGlobals.h>
 
 namespace EventfulEngine{
-    int32 EventfulEngineLoop::PreInitProcessCLI(
+    int32 EventfulEngineLoop::PreInitProcessCli(
     ){
         // TODO: Encapsulate default CLI options in a free function somewhere else
         g_commandLine.AddOption<bool>("v,verbose", "Enable verbose logging",
@@ -22,14 +22,14 @@ namespace EventfulEngine{
         return success ? 0 : 1;
     }
 
-    int32 EventfulEngineLoop::PreInitPreStartupScreen(const EFString& CmdLine){
-        (void)CmdLine;
+    int32 EventfulEngineLoop::PreInitPreStartupScreen(const EFString& cmdLine){
+        (void)cmdLine;
         LoadPreInitModules();
         return 0;
     }
 
-    int32 EventfulEngineLoop::PreInitPostStartupScreen(const EFString& CmdLine){
-        (void)CmdLine;
+    int32 EventfulEngineLoop::PreInitPostStartupScreen(const EFString& cmdLine){
+        (void)cmdLine;
         const bool success = LoadCoreModules();
         return success ? 0 : 1;
     }
@@ -44,10 +44,10 @@ namespace EventfulEngine{
         return true;
     }
 
-    void EventfulEngineLoop::OverrideProjectModule(const EFString& InOriginalProjectModuleName,
-                                                   const EFString& InReplacementProjectModuleName){
-        (void)InOriginalProjectModuleName;
-        (void)InReplacementProjectModuleName;
+    void EventfulEngineLoop::OverrideProjectModule(const EFString& inOriginalProjectModuleName,
+                                                   const EFString& inReplacementProjectModuleName){
+        (void)inOriginalProjectModuleName;
+        (void)inReplacementProjectModuleName;
         // stub for overriding project module
     }
 
@@ -96,7 +96,7 @@ namespace EventfulEngine{
     }
 #endif // WITH_ENGINE
 
-    void EventfulEngineLoop::PostInitGraphicsAPI(){
+    void EventfulEngineLoop::PostInitGraphicsApi(){
         // stub for post RHI initialization
     }
 

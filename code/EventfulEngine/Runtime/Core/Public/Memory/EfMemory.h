@@ -1,45 +1,121 @@
 #pragma once
 #include <memory>
-
+#include <mutex>
+#include <map>
+#include "CoreMacros.h"
 // TODO: Wrap std smartpointers
 // TODO: Optional; Custom Memory Alignment and management, overwrite global standard new and delete keywords to use
 // threshold based Garbage Collection.
 namespace EventfulEngine{
 
-    template <typename T>
-    using EFUniquePtr = std::unique_ptr<T>;
+    DECLARE_HANDLE(EFMemoryHandle);
 
-    template <typename T>
-    using EFSharedPtr = std::shared_ptr<T>;
+    struct EFAllocationStats{
+        size_t TotalAllocated = 0;
+        size_t TotalFreed = 0;
+    };
 
-    template <typename T>
-    using EFWeakPtr = std::weak_ptr<T>;
+    struct EFAllocation{
+        void* Memory = nullptr;
+        size_t Size = 0;
+        const char* Category = nullptr;
+    };
 
-    template <typename T, typename... Args>
-    inline EFUniquePtr<T> MakeUnique(Args&&... args);
+    namespace EFMemory{
+        const EFAllocationStats& GetAllocationStats();
+    }
 
-    template <typename T, typename... Args>
-    inline EFSharedPtr<T> MakeShared(Args&&... args);
+    template <class T>
+    struct EFMallocator{
+        typedef T value_type;
 
-    class EFMemory{
+        EFMallocator() = default;
+
+        template <class U>
+        explicit(false) constexpr EFMallocator(const EFMallocator<U>&) noexcept{
+        }
+
+        T* allocate(const std::size_t n){
+#undef max
+            if (n > std::numeric_limits<std::size_t>::max() / sizeof(T))
+                throw std::bad_array_new_length();
+
+            if (auto p = static_cast<T*>(std::malloc(n * sizeof(T)))){
+                return p;
+            }
+
+            throw std::bad_alloc();
+        }
+
+        static void deallocate(T* p, std::size_t n) noexcept{
+            std::free(p);
+        }
+    };
+
+    struct AllocatorData{
+        using MapAlloc = EFMallocator<std::pair<const void* const, EFAllocation>>;
+        using StatsMapAlloc = EFMallocator<std::pair<const char* const, EFAllocationStats>>;
+
+        using AllocationStatsMap = std::map<const char*, EFAllocationStats, std::less<const char*>, StatsMapAlloc>;
+
+        std::map<const void*, EFAllocation, std::less<const void*>, MapAlloc> AllocationMap;
+        AllocationStatsMap AllocationStatsMap_;
+
+        std::mutex Mutex, StatsMutex;
+    };
+
+
+    class EFAllocator{
     public:
-        // Allocate "size" bytes of memory.
-        static void* Malloc(std::size_t size);
+        static void Init();
 
-        // Resize previously allocated memory block.
-        static void* Realloc(void* ptr, std::size_t newSize);
+        static EFMemoryHandle AllocateRaw(size_t size);
 
-        // Free memory previously allocated with Malloc/Realloc.
-        static void Free(void* ptr);
+        static EFMemoryHandle Allocate(size_t size);
 
-        // TODO: Provide alignment-aware variants of the above.
-        static void* AlignedMalloc(std::size_t size, std::size_t alignment);
+        static EFMemoryHandle Allocate(size_t size, const char* desc);
 
-        static void AlignedFree(void* ptr);
+        static EFMemoryHandle Allocate(size_t size, const char* file, int line);
 
-        // TODO: Implement garbage collection for threshold based cleanup.
-        static void CollectGarbage();
+        static void Free(EFMemoryHandle memory);
+
+        static const AllocatorData::AllocationStatsMap& GetAllocationStats(){ return _data->AllocationStatsMap_; }
+
+    private:
+        inline static AllocatorData* _data = nullptr;
     };
 }
 
-#include "EfMemory.inl"
+_NODISCARD _Ret_notnull_ _Post_writable_byte_size_(size) _VCRT_ALLOCATOR
+void* __CRTDECL operator new(size_t _Size);
+
+_NODISCARD _Ret_notnull_ _Post_writable_byte_size_(size) _VCRT_ALLOCATOR
+void* __CRTDECL operator new[](size_t _Size);
+
+_NODISCARD _Ret_notnull_ _Post_writable_byte_size_(size) _VCRT_ALLOCATOR
+void* __CRTDECL operator new(size_t size, const char* desc);
+
+_NODISCARD _Ret_notnull_ _Post_writable_byte_size_(size) _VCRT_ALLOCATOR
+void* __CRTDECL operator new[](size_t size, const char* desc);
+
+_NODISCARD _Ret_notnull_ _Post_writable_byte_size_(size) _VCRT_ALLOCATOR
+void* __CRTDECL operator new(size_t size, const char* file, int line);
+
+_NODISCARD _Ret_notnull_ _Post_writable_byte_size_(size) _VCRT_ALLOCATOR
+void* __CRTDECL operator new[](size_t size, const char* file, int line);
+
+void __CRTDECL operator delete(void* _Block) noexcept;
+
+void __CRTDECL operator delete(void* _Block, size_t _Size) noexcept;
+
+void __CRTDECL operator delete(void* memory, const char* desc) noexcept;
+
+void __CRTDECL operator delete(void* memory, const char* file, int line) noexcept;
+
+void __CRTDECL operator delete[](void* _Block) noexcept;
+
+void __CRTDECL operator delete[](void* _Block, size_t _Size) noexcept;
+
+void __CRTDECL operator delete[](void* memory, const char* desc) noexcept;
+
+void __CRTDECL operator delete[](void* memory, const char* file, int line) noexcept;

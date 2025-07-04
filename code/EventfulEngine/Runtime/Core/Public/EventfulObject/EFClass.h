@@ -238,13 +238,13 @@ namespace EventfulEngine{
     private: \
     struct _Registrar{ \
     _Registrar(){ \
-    auto& efClassPtr = MakeShared<EFClass>()\
+    auto& efClassPtr = std::make_shared<EFClass>()\
     efClassPtr->Name = _name;\
     efClassPtr->Hash =typeid(ClassName).hash_code();\
     efClassPtr->ParentHash = typeid(ParentClassName).hash_code();\
     efClassPtr->ClassType = typeid(ClassName);\
-    efClassPtr->Flags;\
-    efClassPtr->{__VA_ARGS__};\
+    efClassPtr->Flags = Flags;\
+    efClassPtr->MetaData = {__VA_ARGS__};\
     _efClass = EFReflectionManager::Get().RegisterClass(efClassPtr); \
     } \
     }; \
@@ -259,7 +259,7 @@ friend bool _ReflectedClass_##ClassName();
     const auto clsHash = typeid(registeringClass).hash_code();\
     registeringClass::_efClass = EFReflectionManager::Get().GetClass(clsHash);\
     if (!registeringClass::_efClass){\
-        auto efClassPtr = MakeShared<EFClass>();\
+        auto efClassPtr = std::make_shared<EFClass>();\
         efClassPtr->Name = registeringClass::_name;\
         efClassPtr->Hash = clsHash;\
         efClassPtr->ParentHash = typeid(registeringClass::_superClass).hash_code();\
@@ -274,7 +274,7 @@ RegisterJsonType<ClassName>();
 using MemberPointer = decltype(&registeringClass::Property);\
 using AutoPropertyT = EFAutoPropertyImp<MemberPointer>;\
 auto memberData = MakeMemberData(&registeringClass::Property);\
-auto efAutoProperty = MakeUnique<AutoPropertyT>(memberData);\
+auto efAutoProperty = std::make_unique<AutoPropertyT>(memberData);\
 \
     EFReflectionManager::Get()\
     .RegisterProperty(clsHash,\
@@ -292,7 +292,7 @@ RegisterJsonType<AutoPropertyT::MemberType>();
     using MethodPointer = decltype(&registeringClass::Method);\
     using CallableT = EFCallableMethod<MethodPointer>;\
     auto methodData = make_method_data(&registeringClass::Method);\
-    auto efCallable = MakeUnique<CallableT>(methodData);\
+    auto efCallable = std::make_unique<CallableT>(methodData);\
 \
     EFReflectionManager::Get()\
     .RegisterMethod(clsHash,\

@@ -1,21 +1,47 @@
 #pragma once
 
 #include "CoreMacros.h"
-#include <type_traits>
+
+// Get Compiler
+#if defined(__GNUC__)
+#if defined(__clang__)
+        #define EF_COMPILER_CLANG
+#else
+        #define EF_COMPILER_GCC
+#endif
+#elif defined(_MSC_VER)
+#define EF_COMPILER_MSVC
+#endif
+
+// Set Forceinline macro
+#ifdef EF_COMPILER_MSVC
+#define EF_FORCE_INLINE __forceinline
+#define EF_EXPLICIT_STATIC static
+#elif defined(__GNUC__)
+        #define EF_FORCE_INLINE __attribute__((always_inline)) inline
+        #define EF_EXPLICIT_STATIC
+#else
+        #define EF_FORCE_INLINE inline
+        #define EF_EXPLICIT_STATIC
+#endif
 
 // TODO: Currently only support windows and autodefines it, later CMake should set platform defines, this script makes sure to undefine other platforms, even though they are not supported yet
-#define PLATFORM_WINDOWS = 1
+#define EF_PLATFORM_WINDOWS 1
 
-#if !defined(PLATFORM_WINDOWS)
-#define PLATFORM_WINDOWS 0
+#if !defined(EF_PLATFORM_WINDOWS)
+#define EF_PLATFORM_WINDOWS 0
 #endif
-#if !defined(PLATFORM_LINUX)
-#define PLATFORM_LINUX 0
+#if !defined(EF_PLATFORM_LINUX)
+#define EF_PLATFORM_LINUX 0
 #endif
-#if !defined(PLATFORM_MAC)
-#define PLATFORM_MAC 0
+#if !defined(EF_PLATFORM_APPLE)
+#define EF_PLATFORM_APPLE 0
+#endif
+#if !defined(EF_PLATFORM_MAC)
+#define EF_PLATFORM_MAC 0
 #endif
 // etc...
+
 
 // This makes it so we are always safe to include Platform.h if we need platform-specific code
 #include "GenericPlatform/GenericPlatform.h"

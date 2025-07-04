@@ -12,7 +12,7 @@ namespace EventfulEngine{
 
     // Intentional recursion, should be safe with the checks below. TODO: Think about turning recursion into coroutine
     void EFObject::Serialize(JsonArchive& ar) const{
-        const auto& writers = G_Writers();
+        const auto& writers = GWriters();
         for (const auto& property : _efClass->Properties){
             if (auto iterator = writers.find(property.Type); iterator != writers.end()){
                 iterator->second(this, ar, property);
@@ -37,7 +37,7 @@ namespace EventfulEngine{
             return;
         }
 
-        const auto& readers = G_Readers();
+        const auto& readers = GReaders();
         for (const auto& property : _efClass->Properties){
             if (auto iterator = readers.find(property.Type); iterator != readers.end()){
                 iterator->second(this, ar, property);

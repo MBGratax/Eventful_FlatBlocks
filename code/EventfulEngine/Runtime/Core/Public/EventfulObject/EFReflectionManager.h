@@ -8,7 +8,7 @@
 namespace EventfulEngine{
     // Global Registry for Eventful Reflection, holds all Reflection data that was registered and provides methods to
     // get info on classes or invoke methods/get members
-    using EFClassPtr = EFSharedPtr<EFClass>;
+    using EFClassPtr = std::shared_ptr<EFClass>;
 
     class EFReflectionManager : public IManager<EFReflectionManager>{
     public:

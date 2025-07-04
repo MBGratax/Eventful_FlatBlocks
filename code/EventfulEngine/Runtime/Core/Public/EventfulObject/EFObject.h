@@ -1,4 +1,6 @@
 #pragma once
+#include <EFGUID.h>
+
 #include "CoreTypes.h"
 #include "EFReflectionManager.h"
 #include "EfMemory.h"
@@ -41,12 +43,8 @@ namespace EventfulEngine{
 
         virtual ~EFObject() = default;
 
-        // Custom new/delete, so all objects go through EFMemory.
-        void* operator new(const std::size_t size){ return EFMemory::Malloc(size); }
-        void operator delete(void* ptr){ EFMemory::Free(ptr); }
-
         template <typename T, typename... Args>
-        static EFSharedPtr<T> Create(EFObject const* owner, const EFString& name, const int GUID, Args&&... args){
+        static std::shared_ptr<T> Create(EFObject const* owner, const EFString& name, const int GUID, Args&&... args){
             auto obj = MakeShared<T>(std::forward<Args>(args)...);
             obj->_owner = owner;
             obj->_objectName = name;
@@ -56,14 +54,14 @@ namespace EventfulEngine{
         }
 
         template <typename T>
-        static void Destroy(EFSharedPtr<T>& obj){ obj.reset(); }
+        static void Destroy(std::shared_ptr<T>& obj){ obj.reset(); }
 
         [[nodiscard]] bool IsValid() const{ return _bIsValid; }
 
         [[nodiscard]] EFObject* GetOwner() const{ return _owner; }
         void SetOuter(EFObject* outer){ _owner = outer; }
 
-        int GetGUID() const{ return _guid; }
+        EFGUID GetGUID() const{ return _guid; }
 
         [[nodiscard]] const EFString& GetName() const{ return _objectName; }
         void Rename(const std::string_view newName){ _objectName = newName; }
@@ -111,7 +109,7 @@ namespace EventfulEngine{
         EFObject* _owner{nullptr};
         EFString _objectName;
         // TODO: Make actual GUID
-        int _guid{0};
+        EFGUID _guid{};
         std::vector<EFString> _tags;
     };
 }

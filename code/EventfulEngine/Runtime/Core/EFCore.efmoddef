@@ -17,6 +17,22 @@
     {
       "Dependency Type": "PUBLIC",
       "Library Name": "cxxopts::cxxopts"
+    },
+    {
+      "Dependency Type": "PUBLIC",
+      "Library Name": "Tracy::TracyClient"
+    },
+    {
+      "Dependency Type": "PUBLIC",
+      "Library Name": "RTTR::Core"
+    },
+    {
+      "Dependency Type": "PUBLIC",
+      "Library Name": "nfd::nfd"
+    },
+    {
+      "Dependency Type": "PUBLIC",
+      "Library Name": "glfw"
     }
   ]
 }

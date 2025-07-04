@@ -7,14 +7,15 @@
 
 namespace EventfulEngine{
     EFClassPtr EFReflectionManager::RegisterClass(EFClassPtr& cls){
+        const size_t hash = cls->Hash;
         _classes.insert_or_assign(cls->Hash, std::move(cls));
-        return _classes[cls->Hash];
+        return _classes[hash];
     }
 
     void EFReflectionManager::RegisterProperty(const std::size_t classHash, const EFProperty& property){
         auto& cls = _classes[classHash];
         if (!cls){
-            cls = MakeShared<EFClass>();
+            cls = std::make_shared<EFClass>();
         }
         cls->Properties.push_back(property);
     }
@@ -22,7 +23,7 @@ namespace EventfulEngine{
     void EFReflectionManager::RegisterMethod(const std::size_t classHash, EFMethod method){
         auto& cls = _classes[classHash];
         if (!cls){
-            cls = MakeShared<EFClass>();
+            cls = std::make_shared<EFClass>();
         }
         cls->Methods.push_back(std::move(method));
     }

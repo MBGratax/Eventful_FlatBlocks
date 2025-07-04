@@ -17,7 +17,7 @@ namespace EventfulEngine{
 	/**
 	 * PreInits the engine loop
 	 */
-	int32 BeforeEngineInit(const EFString& CmdLine){
+	int32 BeforeEngineInit(){
 		const int32 errorLevel = g_engineLoop.BeforeEngineInit();
 
 		return errorLevel;
@@ -66,11 +66,11 @@ namespace EventfulEngine{
 		EngineLoopCleanupGuard cleanupGuard;
 
 		// PreInit code (use cmd stuff, load modules, etc)
-		int32 ErrorLevel = BeforeEngineInit("");
+		int32 errorLevel = BeforeEngineInit();
 
 		// exit if PreInit failed, or engine was immediately requested to stop.
-		if (ErrorLevel != 0 || IsEngineExitRequested()){
-			return ErrorLevel;
+		if (errorLevel != 0 || IsEngineExitRequested()){
+			return errorLevel;
 		}
 
 		{
@@ -81,11 +81,11 @@ namespace EventfulEngine{
 			else
 #endif
 			{
-				ErrorLevel = EngineInit();
+				errorLevel = EngineInit();
 			}
 		}
 		EFPlatformTime::Init();
-		double EngineInitializationTime = EFPlatformTime::ToSeconds(
+		double engineInitializationTime = EFPlatformTime::ToSeconds(
 			EFPlatformTime::lastTime - EFPlatformTime::appStartTime);
 
 		// If we are embedded i.e., in the editor or another custom application, let them handle the engine ticking
@@ -100,6 +100,6 @@ namespace EventfulEngine{
 			EditorExit();
 		}
 #endif
-		return ErrorLevel;
+		return errorLevel;
 	}
 }
